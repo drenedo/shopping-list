@@ -1,0 +1,16 @@
+# Gradle
+.gradle
+build/
+gradle
+gradlew
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+var/log/*
+!var/log/.gitkeep
+
+#intellij
+.idea
+.github
+.editorconfig

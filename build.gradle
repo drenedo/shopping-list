@@ -1,0 +1,93 @@
+plugins {
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'org.springframework.boot' version '3.0.0-RC1'
+    id 'nu.studer.jooq' version '7.1.1'
+}
+
+apply plugin: 'java'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'org.springframework.boot'
+
+group = 'me.renedo.shopping'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 17
+targetCompatibility = 17
+
+repositories {
+    jcenter()
+    mavenCentral()
+    maven { url "https://repo.spring.io/milestone/" }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation('org.springframework.boot:spring-boot-starter-jooq') {
+        //The spring implementation has a very old versión of jooq,
+        exclude group: 'org.jooq', module: 'jooq'
+    }
+    implementation 'org.jooq:jooq:3.17.14'
+    implementation 'org.apache.logging.log4j:log4j-core:2.19.0'
+    implementation 'com.vlkan.log4j2:log4j2-logstash-layout:1.0.5'
+    implementation 'com.zaxxer:HikariCP:5.0.1'
+    //TODO Only for test, remove this when it is possible
+    implementation 'com.h2database:h2:1.4.200'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
+
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
+
+    jooqGenerator('org.jooq:jooq-meta-extensions:3.15.11') {
+        //jooq generator has problems with h2 >=2 .* so we need to downgrade the h2 to the last 1.4 version
+        exclude group: 'com.h2database', module: 'h2'
+    }
+    jooqGenerator 'com.h2database:h2:1.4.200'
+}
+
+test {
+    useJUnitPlatform()
+
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+    }
+}
+
+import org.jooq.meta.jaxb.Logging
+jooq {
+    version = '3.15.11'
+    edition = nu.studer.gradle.jooq.JooqEdition.OSS
+
+    configurations {
+        main {
+            generationTool {
+                logging = Logging.WARN
+                generator {
+                    name = 'org.jooq.codegen.DefaultGenerator'
+                    strategy {
+                        name = 'org.jooq.codegen.DefaultGeneratorStrategy'
+                    }
+                    database {
+                        name = 'org.jooq.meta.extensions.ddl.DDLDatabase'
+                        properties {
+                            property {
+                                key = 'scripts'
+                                value = 'src/main/resources/scripts/create.sql'
+                            }
+
+                        }
+                    }
+                    generate {
+                        relations = true
+                        deprecated = false
+                        records = true
+                        immutablePojos = true
+                        fluentSetters = true
+                    }
+                    target {
+                        packageName = 'me.renedo.shopping.shared.jooq'
+                    }
+                }
+            }
+        }
+    }
+}
