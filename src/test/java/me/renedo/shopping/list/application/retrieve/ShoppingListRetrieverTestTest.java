@@ -13,10 +13,10 @@ import org.junit.jupiter.api.Test;
 import me.renedo.shopping.item.application.retrieve.ItemRetriever;
 import me.renedo.shopping.list.domain.ShoppingListRepository;
 
-class ShoppingListRetrieverTestShould {
+class ShoppingListRetrieverTestTest {
 
     @Test
-    public void retrieve_paginated(){
+    void retrieve_paginated(){
         ShoppingListRepository repository = mock(ShoppingListRepository.class);
         ItemRetriever itemRetriever = mock(ItemRetriever.class);
         ShoppingListRetriever retriever = new ShoppingListRetriever(repository, itemRetriever);
@@ -27,7 +27,7 @@ class ShoppingListRetrieverTestShould {
     }
 
     @Test
-    public void retrieve_paginated_with_date(){
+    void retrieve_paginated_with_date(){
         ShoppingListRepository repository = mock(ShoppingListRepository.class);
         ItemRetriever itemRetriever = mock(ItemRetriever.class);
         ShoppingListRetriever retriever = new ShoppingListRetriever(repository, itemRetriever);

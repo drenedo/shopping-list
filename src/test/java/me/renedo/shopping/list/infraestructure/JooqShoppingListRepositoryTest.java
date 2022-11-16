@@ -15,21 +15,21 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import me.renedo.shopping.InfraestructureShould;
+import me.renedo.shopping.InfrastructureTestCase;
 import me.renedo.shopping.list.domain.ShoppingList;
 import me.renedo.shopping.status.domain.Status;
 
-class JooqShoppingListRepositoryShould extends InfraestructureShould {
+class JooqShoppingListRepositoryTest extends InfrastructureTestCase {
 
     private final JooqShoppingListRepository repository;
 
     @Autowired
-    JooqShoppingListRepositoryShould(JooqShoppingListRepository repository) {
+    JooqShoppingListRepositoryTest(JooqShoppingListRepository repository) {
         this.repository = repository;
     }
 
     @Test
-    public void find_first_elements_paginated(){
+    void find_first_elements_paginated(){
         List<ShoppingList> lists = repository.findAllPaginate(null, 5);
 
         assertThat(lists, Matchers.hasSize(5));
@@ -41,7 +41,7 @@ class JooqShoppingListRepositoryShould extends InfraestructureShould {
     }
 
     @Test
-    public void find_second_elements_paginated(){
+    void find_second_elements_paginated(){
         List<ShoppingList> lists = repository.findAllPaginate(LocalDateTime.of(2022, 11, 16, 10, 0, 1), 3);
 
         assertThat(lists, Matchers.hasSize(3));
@@ -51,7 +51,7 @@ class JooqShoppingListRepositoryShould extends InfraestructureShould {
     }
 
     @Test
-    public void save_list(){
+    void save_list(){
         UUID uuid = UUID.randomUUID();
 
         ShoppingList saved = repository.save(new ShoppingList(uuid, LocalDateTime.now(), "some-name", "some-descriotion", null, Status.ACTIVE));
@@ -61,7 +61,7 @@ class JooqShoppingListRepositoryShould extends InfraestructureShould {
     }
 
     @Test
-    public void find_list(){
+    void find_list(){
         UUID uuid = UUID.randomUUID();
         repository.save(new ShoppingList(uuid, LocalDateTime.now(), "some-name", "some-descriotion", null, Status.ACTIVE));
 
@@ -72,7 +72,7 @@ class JooqShoppingListRepositoryShould extends InfraestructureShould {
     }
 
     @Test
-    public void delete_list(){
+    void delete_list(){
         UUID uuid = UUID.randomUUID();
         repository.save(new ShoppingList(uuid, LocalDateTime.now(), "some-name", "some-descriotion", null, Status.ACTIVE));
         assertTrue(repository.findById(uuid).isPresent());

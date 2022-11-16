@@ -10,11 +10,11 @@ import org.junit.jupiter.api.Test;
 
 import me.renedo.shopping.item.domain.ItemRepository;
 
-class ItemEraserShould {
+class ItemEraserTest {
 
 
     @Test
-    public void delete_valid_item(){
+    void delete_valid_item(){
         ItemRepository repository = mock(ItemRepository.class);
         ItemEraser eraser = new ItemEraser(repository);
         UUID id = UUID.randomUUID();

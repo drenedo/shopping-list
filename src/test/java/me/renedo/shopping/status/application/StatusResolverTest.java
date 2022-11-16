@@ -10,10 +10,10 @@ import org.junit.jupiter.api.Test;
 
 import me.renedo.shopping.status.domain.Status;
 
-class StatusResolverShould {
+class StatusResolverTest {
 
     @Test
-    public void save_a_valid_item(){
+    void save_a_valid_item(){
         StatusResolver resolver = new StatusResolver();
 
         List<Status> statuses = resolver.getAllStatus();

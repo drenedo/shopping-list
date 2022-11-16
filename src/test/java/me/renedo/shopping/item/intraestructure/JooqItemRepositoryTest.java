@@ -13,26 +13,26 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import me.renedo.shopping.InfraestructureShould;
+import me.renedo.shopping.InfrastructureTestCase;
 import me.renedo.shopping.item.domain.Item;
 import me.renedo.shopping.list.domain.ShoppingList;
 import me.renedo.shopping.list.infraestructure.JooqShoppingListRepository;
 import me.renedo.shopping.status.domain.Status;
 
-final class JooqItemRepositoryShould extends InfraestructureShould {
+final class JooqItemRepositoryTest extends InfrastructureTestCase {
 
     private final JooqItemRepository jooqItemRepository;
 
     private final JooqShoppingListRepository shoppingListRepository;
 
     @Autowired
-    JooqItemRepositoryShould(JooqItemRepository jooqItemRepository, JooqShoppingListRepository shoppingListRepository) {
+    JooqItemRepositoryTest(JooqItemRepository jooqItemRepository, JooqShoppingListRepository shoppingListRepository) {
         this.jooqItemRepository = jooqItemRepository;
         this.shoppingListRepository = shoppingListRepository;
     }
 
     @Test
-    public void save_item(){
+    void save_item(){
         UUID uuid = UUID.randomUUID();
 
         Item saved = jooqItemRepository.save(new Item(uuid, "some-name", 23, "some-unit", givenIdOfEmptyList(), Status.ACTIVE));
@@ -42,7 +42,7 @@ final class JooqItemRepositoryShould extends InfraestructureShould {
     }
 
     @Test
-    public void find_item(){
+    void find_item(){
         UUID uuid = UUID.randomUUID();
         jooqItemRepository.save(new Item(uuid, "some-name", 23, "some-unit", givenIdOfEmptyList(), Status.ACTIVE));
 
@@ -53,7 +53,7 @@ final class JooqItemRepositoryShould extends InfraestructureShould {
     }
 
     @Test
-    public void delete_item(){
+    void delete_item(){
         UUID uuid = UUID.randomUUID();
         jooqItemRepository.save(new Item(uuid, "some-name", 23, "some-unit", givenIdOfEmptyList(), Status.ACTIVE));
         assertTrue( jooqItemRepository.findById(uuid).isPresent());
@@ -64,7 +64,7 @@ final class JooqItemRepositoryShould extends InfraestructureShould {
     }
 
     @Test
-    public void find_non_exiting_item(){
+    void find_non_exiting_item(){
         Optional<Item> item = jooqItemRepository.findById(UUID.randomUUID());
 
         assertFalse(item.isPresent());

@@ -11,6 +11,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @SpringBootTest
 @ImportAutoConfiguration(JooqAutoConfiguration.class)
 @DirtiesContext
-public class InfraestructureShould {
+public abstract class InfrastructureTestCase {
 
 }

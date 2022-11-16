@@ -12,10 +12,10 @@ import me.renedo.shopping.item.domain.Item;
 import me.renedo.shopping.item.domain.ItemRepository;
 import me.renedo.shopping.status.domain.Status;
 
-final class ItemCreatorShould {
+final class ItemCreatorTest {
 
     @Test
-    public void save_a_valid_item(){
+    void save_a_valid_item(){
         ItemRepository repository = mock(ItemRepository.class);
         ItemCreator creator = new ItemCreator(repository);
         UUID id = UUID.randomUUID();

@@ -1,10 +1,10 @@
 package me.renedo.shopping.app.http.list;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,13 +29,13 @@ public class ListGetController extends V1Controller {
     }
 
     @GetMapping("/lists/size/{size}")
-    private List<ShoppingListResponse> paginate(@PathVariable Integer size, @RequestParam("date-time") Optional<LocalDateTime> dateTime) {
+    public List<ShoppingListResponse> paginate(@PathVariable Integer size, @RequestParam("date-time") Optional<LocalDateTime> dateTime) {
         return retriever.rerievePaginated(dateTime.orElse(null), size).stream()
-            .map(ShoppingListResponse::new).collect(Collectors.toList());
+            .map(ShoppingListResponse::new).toList();
     }
 
     @GetMapping("/lists/{id}")
-    private ResponseEntity<ShoppingListResponse> getList(@PathVariable String id) {
+    public ResponseEntity<ShoppingListResponse> getList(@PathVariable String id) {
         return retriever.rerieve(UUIDValidator.fromString(id))
             .map(ShoppingListResponse::new)
             .map(ResponseEntity::ok)
@@ -49,11 +49,11 @@ public class ListGetController extends V1Controller {
 
         private static List<ItemResponse> toItemResponses(List<Item> items){
             if(items == null){
-                return null;
+                return Collections.emptyList();
             }
             return items.stream()
                 .map(ItemResponse::new)
-                .collect(Collectors.toList());
+                .toList();
         }
     }
 

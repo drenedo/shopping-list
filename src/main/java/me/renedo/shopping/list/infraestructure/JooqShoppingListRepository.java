@@ -63,8 +63,8 @@ public class JooqShoppingListRepository implements ShoppingListRepository {
             .execute();
     }
 
-    private ShoppingList toShoppingList(ShoppingListRecord record) {
-        return new ShoppingList(record.getId(), record.getDatetime(), record.getName(), record.getDescription(), null,
-            Status.valueOfId(record.getStatus()));
+    private ShoppingList toShoppingList(ShoppingListRecord slRecord) {
+        return new ShoppingList(slRecord.getId(), slRecord.getDatetime(), slRecord.getName(), slRecord.getDescription(), null,
+            Status.valueOfId(slRecord.getStatus()));
     }
 }

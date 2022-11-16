@@ -17,10 +17,10 @@ import me.renedo.shopping.list.domain.ShoppingList;
 import me.renedo.shopping.list.domain.ShoppingListRepository;
 import me.renedo.shopping.status.domain.Status;
 
-class ShoppingListCreatorShould {
+class ShoppingListCreatorTest {
 
     @Test
-    public void save_a_valid_item(){
+    void save_a_valid_item(){
         ShoppingListRepository repository = mock(ShoppingListRepository.class);
         ItemCreator itemCreator = mock(ItemCreator.class);
         ShoppingListCreator creator = new ShoppingListCreator(repository, itemCreator);

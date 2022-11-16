@@ -1,7 +1,5 @@
 package me.renedo.shopping.app.http.list;
 
-import static java.util.stream.Collectors.toList;
-
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,7 +40,7 @@ public final class ListPutController extends V1Controller {
         } else {
             return items.stream()
                 .map(i -> new CreateItemRequest(i.id(), i.name(), i.amount(), i.unit(), uuid))
-                .collect(toList());
+                .toList();
         }
     }
 

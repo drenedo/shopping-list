@@ -1,7 +1,5 @@
 package me.renedo.shopping.app.http.status;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +20,7 @@ public class StatusGetController  extends V1Controller {
 
     @GetMapping("/statuses/")
     public List<StatusResponse> createList() {
-        return resolver.getAllStatus().stream().map(StatusResponse::new).collect(toList());
+        return resolver.getAllStatus().stream().map(StatusResponse::new).toList();
     }
 
     record StatusResponse(String name, char id) {
