@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import org.springframework.context.annotation.Lazy;
 
-import me.renedo.shopping.app.http.error.exception.NotFoundException;
+import me.renedo.app.http.error.exception.NotFoundException;
 import me.renedo.shopping.item.domain.Item;
 import me.renedo.shopping.item.domain.ItemRepository;
 import me.renedo.shopping.list.application.update.ShoppingListUpdater;

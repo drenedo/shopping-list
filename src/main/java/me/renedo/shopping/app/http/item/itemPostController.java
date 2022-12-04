@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import me.renedo.shopping.app.http.V1Controller;
+import me.renedo.app.http.V1Controller;
 import me.renedo.shopping.item.application.update.ItemUpdater;
 import me.renedo.shared.uuid.UUIDValidator;
 import me.renedo.shopping.status.domain.Status;

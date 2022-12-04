@@ -60,7 +60,8 @@ class JooqTermRepositoryTest extends InfrastructureTestCase {
     void search() {
         List<Term> ite = repository.search("ite", Type.PRODUCT);
 
-        assertThat(ite, Matchers.hasSize(1));
+        assertThat(ite, Matchers.hasSize(2));
         assertThat(ite.get(0).getName(), is("item"));
+        assertThat(ite.get(1).getName(), is("itelo"));
     }
 }

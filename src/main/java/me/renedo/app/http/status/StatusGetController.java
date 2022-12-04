@@ -1,11 +1,11 @@
-package me.renedo.shopping.app.http.status;
+package me.renedo.app.http.status;
 
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import me.renedo.shopping.app.http.V1Controller;
+import me.renedo.app.http.V1Controller;
 import me.renedo.shopping.status.application.StatusResolver;
 import me.renedo.shopping.status.domain.Status;
 

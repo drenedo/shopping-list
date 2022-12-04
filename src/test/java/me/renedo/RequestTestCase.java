@@ -55,7 +55,6 @@ public abstract class RequestTestCase{
             .andExpect(status().is(expectedStatusCode));
     }
 
-
     protected String givenListOfShoppingList(List<String>ids) throws JSONException {
         JSONArray jsonArray = new JSONArray();
         ids.forEach(id -> {

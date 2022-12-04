@@ -1,4 +1,4 @@
-package me.renedo.shopping.app.http.error.exception;
+package me.renedo.app.http.error.exception;
 
 public class NotFoundException extends RuntimeException{
 

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import me.renedo.shopping.app.http.V1Controller;
+import me.renedo.app.http.V1Controller;
 import me.renedo.shopping.item.application.create.ItemCreator;
 import me.renedo.shared.uuid.UUIDValidator;
 

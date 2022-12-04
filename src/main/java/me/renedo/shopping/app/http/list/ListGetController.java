@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import me.renedo.shopping.app.http.V1Controller;
-import me.renedo.shopping.app.http.error.exception.NotFoundException;
+import me.renedo.app.http.V1Controller;
+import me.renedo.app.http.error.exception.NotFoundException;
 import me.renedo.shopping.item.domain.Item;
 import me.renedo.shopping.list.application.retrieve.ShoppingListRetriever;
 import me.renedo.shopping.list.domain.ShoppingList;

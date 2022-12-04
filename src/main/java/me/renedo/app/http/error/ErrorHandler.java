@@ -1,4 +1,4 @@
-package me.renedo.shopping.app.http.error;
+package me.renedo.app.http.error;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package me.renedo.shopping.app.http.health;
+package me.renedo.app.http.health;
 
 import java.util.Collections;
 import java.util.HashMap;

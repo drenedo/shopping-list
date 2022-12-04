@@ -44,7 +44,7 @@ public class JooqTermRepository implements TermRepository {
     public List<Term> search(String text, Type type) {
         return context.selectFrom(TERM)
             .where(TERM.NAME.like(text+"%").and(TERM.TYPE.eq(type.toString())))
-            .orderBy(TERM.TIMES).limit(10)
+            .orderBy(TERM.TIMES.desc()).limit(10)
             .fetch()
             .map(this::toTerm);
     }
