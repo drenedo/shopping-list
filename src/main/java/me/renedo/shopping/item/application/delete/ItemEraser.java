@@ -3,7 +3,7 @@ package me.renedo.shopping.item.application.delete;
 import java.util.UUID;
 
 import me.renedo.shopping.item.domain.ItemRepository;
-import me.renedo.shopping.shared.Service;
+import me.renedo.shared.Service;
 
 @Service
 public class ItemEraser {

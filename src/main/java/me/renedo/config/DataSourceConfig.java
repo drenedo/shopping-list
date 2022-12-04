@@ -1,4 +1,4 @@
-package me.renedo.shopping.config;
+package me.renedo.config;
 
 import javax.sql.DataSource;
 

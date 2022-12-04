@@ -8,7 +8,7 @@ import java.util.UUID;
 import me.renedo.shopping.item.application.retrieve.ItemRetriever;
 import me.renedo.shopping.list.domain.ShoppingList;
 import me.renedo.shopping.list.domain.ShoppingListRepository;
-import me.renedo.shopping.shared.Service;
+import me.renedo.shared.Service;
 
 @Service
 public class ShoppingListRetriever {

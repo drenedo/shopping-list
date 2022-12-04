@@ -15,8 +15,8 @@ public enum Status {
 
     public static Status valueOfId(String value){
         return switch (value){
-            case "A" -> ACTIVE;
-            case "C" -> CANCELED;
+            case "A", "ACTIVE" -> ACTIVE;
+            case "C", "CANCELED" -> CANCELED;
             default -> INACTIVE;
         };
     }

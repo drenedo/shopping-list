@@ -1,4 +1,4 @@
-package me.renedo.shopping.shared.uuid;
+package me.renedo.shared.uuid;
 
 import java.util.UUID;
 

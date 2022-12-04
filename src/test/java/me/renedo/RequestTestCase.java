@@ -1,4 +1,4 @@
-package me.renedo.shopping;
+package me.renedo;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -28,6 +28,7 @@ public abstract class RequestTestCase{
     protected final static String PUT = "PUT";
 
     protected final static String DELETE = "DELETE";
+    protected final static String POST = "POST";
 
     @Autowired
     private MockMvc mockMvc;
@@ -82,11 +83,5 @@ public abstract class RequestTestCase{
         json.put("amount", amount);
         json.put( "unit", unit);
         return json.toString();
-    }
-
-    protected UUID createList() throws Exception {
-        UUID uuid = UUID.randomUUID();
-        assertRequestWithBody(PUT, "/api/v1/lists/" + uuid, givenShoppingList("some-name", "some-description"), 201);
-        return uuid;
     }
 }

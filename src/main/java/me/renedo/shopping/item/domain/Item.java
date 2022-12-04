@@ -5,9 +5,12 @@ import java.util.UUID;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import me.renedo.shared.bus.event.EventSource;
+import me.renedo.shared.exception.NotAcceptableException;
+import me.renedo.shopping.item.domain.event.ItemCreatedEvent;
 import me.renedo.shopping.status.domain.Status;
 
-public class Item {
+public class Item extends EventSource {
 
     private final UUID id;
 
@@ -17,17 +20,36 @@ public class Item {
 
     private final String unit;
 
+    private final String brand;
+
     private final UUID listId;
 
     private final Status status;
 
-    public Item(UUID id, String name, Integer amount, String unit, UUID listId, Status status) {
+    public Item(UUID id, String name, Integer amount, String unit, String brand, UUID listId, Status status) {
+        if(name == null || name.isBlank()){
+            throw new NotAcceptableException("Name is mandatory");
+        }
+        if(id == null){
+            throw new NotAcceptableException("Id is mandatory");
+        }
+        if(amount == null || amount < 1){
+            throw new NotAcceptableException("Amount is mandatory");
+        }
+        if(status == null){
+            throw new NotAcceptableException("Status is mandatory");
+        }
+        if(listId == null){
+            throw new NotAcceptableException("List is mandatory");
+        }
         this.id = id;
-        this.name = name;
+        this.name = name.toLowerCase();
         this.amount = amount;
-        this.unit = unit;
+        this.unit = unit!=null ? unit.toLowerCase() : null;
+        this.brand = brand!=null ? brand.toLowerCase() : null;
         this.listId = listId;
         this.status = status;
+        this.record(new ItemCreatedEvent(id, name, unit, brand));
     }
 
     public UUID getId() {
@@ -40,6 +62,10 @@ public class Item {
 
     public Integer getAmount() {
         return amount;
+    }
+
+    public String getBrand() {
+        return brand;
     }
 
     public String getUnit() {
@@ -63,11 +89,11 @@ public class Item {
 
         Item item = (Item) o;
 
-        return new EqualsBuilder().append(id, item.id).append(name, item.name).append(amount, item.amount)
-            .append(unit, item.unit).append(listId, item.listId).isEquals();
+        return new EqualsBuilder().append(id, item.id).append(name, item.name).append(amount, item.amount).append(unit, item.unit)
+            .append(brand, item.brand).append(listId, item.listId).isEquals();
     }
 
     @Override public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(id).append(name).append(amount).append(unit).append(listId).toHashCode();
+        return new HashCodeBuilder(17, 37).append(id).append(name).append(amount).append(unit).append(brand).append(listId).toHashCode();
     }
 }

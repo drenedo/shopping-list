@@ -3,7 +3,7 @@ package me.renedo.shopping.status.application;
 import java.util.Arrays;
 import java.util.List;
 
-import me.renedo.shopping.shared.Service;
+import me.renedo.shared.Service;
 import me.renedo.shopping.status.domain.Status;
 
 @Service

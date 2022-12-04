@@ -20,8 +20,7 @@ import me.renedo.shopping.status.domain.Status;
 class ShoppingListEraserTest {
 
 
-    @Test
-    void delete_list() {
+    @Test void delete_list() {
         ShoppingListRepository repository = mock(ShoppingListRepository.class);
         ItemRetriever itemRetriever = mock(ItemRetriever.class);
         ItemEraser itemEraser = mock(ItemEraser.class);
@@ -34,14 +33,13 @@ class ShoppingListEraserTest {
         verify(repository, atLeastOnce()).delete(id);
     }
 
-    @Test
-    void delete_list_with_items() {
+    @Test void delete_list_with_items() {
         ShoppingListRepository repository = mock(ShoppingListRepository.class);
         ItemRetriever itemRetriever = mock(ItemRetriever.class);
         ItemEraser itemEraser = mock(ItemEraser.class);
         ShoppingListEraser eraser = new ShoppingListEraser(repository, itemRetriever, itemEraser);
         UUID id = UUID.randomUUID();
-        when(itemRetriever.retrieveListItems(id)).thenReturn(List.of(new Item(UUID.randomUUID(), "name", 2, "Unit", id, Status.ACTIVE)));
+        when(itemRetriever.retrieveListItems(id)).thenReturn(List.of(new Item(UUID.randomUUID(), "name", 2, "Unit", "brand", id, Status.ACTIVE)));
 
         eraser.delete(id);
 

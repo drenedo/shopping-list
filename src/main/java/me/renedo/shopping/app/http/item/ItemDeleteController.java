@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import me.renedo.shopping.app.http.V1Controller;
 import me.renedo.shopping.item.application.delete.ItemEraser;
-import me.renedo.shopping.shared.uuid.UUIDValidator;
+import me.renedo.shared.uuid.UUIDValidator;
 
 @RestController
 public class ItemDeleteController extends V1Controller {

@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 
-import me.renedo.shopping.RequestTestCase;
+import me.renedo.RequestTestCase;
 
 final class ListPutControllerTest extends RequestTestCase {
 

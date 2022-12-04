@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import me.renedo.shopping.item.domain.Item;
 import me.renedo.shopping.item.intraestructure.JooqItemRepository;
-import me.renedo.shopping.shared.Service;
+import me.renedo.shared.Service;
 
 @Service
 public class ItemRetriever {

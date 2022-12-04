@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import me.renedo.shopping.RequestTestCase;
+import me.renedo.RequestTestCase;
 
 class ListGetControllerTest extends RequestTestCase {
 

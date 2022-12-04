@@ -14,3 +14,5 @@ INSERT INTO SHOPPING_LIST (id, name, description, datetime, status) VALUES ('d44
 
 INSERT INTO SHOPPING_LIST (id, name, description, datetime, status) VALUES ('d44f860a-0d91-4529-9f91-ac9f5f29a340', 'list', 'list-description', CURRENT_DATE, 'A');
 INSERT INTO ITEM (id, name, amount, unit, status, list) VALUES ('d44f860a-0d91-4529-9f91-ac9f5f29a35c', 'item', 1, 'Unit', 'A', 'd44f860a-0d91-4529-9f91-ac9f5f29a340');
+
+INSERT INTO TERM (ID, NAME, TIMES, TYPE, UPDATED) values ('d44f860a-0d91-0529-9f91-ac9f5f29a35c', 'item', 3, 'P', CURRENT_DATE);

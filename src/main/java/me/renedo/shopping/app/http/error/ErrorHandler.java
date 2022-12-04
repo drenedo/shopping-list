@@ -1,15 +1,20 @@
 package me.renedo.shopping.app.http.error;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.exception.DataAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import jakarta.servlet.ServletException;
-import me.renedo.shopping.shared.uuid.NotAcceptableUUIDException;
+import me.renedo.shared.exception.NotAcceptableException;
+import me.renedo.shared.uuid.NotAcceptableUUIDException;
 
 @ControllerAdvice
 public class ErrorHandler {
@@ -31,5 +36,15 @@ public class ErrorHandler {
     @ExceptionHandler(NotAcceptableUUIDException.class)
     public void uuidException(NotAcceptableUUIDException e) {
         logger.error("NotAcceptableUUIDException", e);
+    }
+
+    @ResponseStatus(value = HttpStatus.NOT_ACCEPTABLE)
+    @ExceptionHandler(NotAcceptableException.class)
+    public ResponseEntity<Object> notAcceptableException(NotAcceptableException nae){
+        logger.error("NotAcceptableException", nae);
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("message", nae.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.NOT_ACCEPTABLE);
     }
 }

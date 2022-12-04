@@ -8,7 +8,7 @@ import me.renedo.shopping.item.application.create.ItemCreator;
 import me.renedo.shopping.item.application.create.ItemCreator.CreateItemRequest;
 import me.renedo.shopping.list.domain.ShoppingList;
 import me.renedo.shopping.list.domain.ShoppingListRepository;
-import me.renedo.shopping.shared.Service;
+import me.renedo.shared.Service;
 import me.renedo.shopping.status.domain.Status;
 
 @Service
@@ -27,7 +27,7 @@ public class ShoppingListCreator {
     public void create(CreateShoppingListRequest request) {
         shoppinglistRepository.save(new ShoppingList(request.id(), request.dateTime(), request.name(), request.description(), null, Status.ACTIVE));
         request.items.stream()
-            .map(r->new CreateItemRequest(r.id(), r.name(), r.amount(), r.unit(), request.id()))
+            .map(r->new CreateItemRequest(r.id(), r.name(), r.amount(), r.unit(), r.brand(), request.id()))
             .forEach(itemCreator::create);
     }
 

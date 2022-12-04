@@ -1,4 +1,4 @@
-package me.renedo.shopping.shared;
+package me.renedo.shared;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

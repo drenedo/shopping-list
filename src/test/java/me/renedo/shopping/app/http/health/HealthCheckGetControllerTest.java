@@ -3,7 +3,7 @@ package me.renedo.shopping.app.http.health;
 
 import org.junit.jupiter.api.Test;
 
-import me.renedo.shopping.RequestTestCase;
+import me.renedo.RequestTestCase;
 
 final class HealthCheckGetControllerTest extends RequestTestCase {
 

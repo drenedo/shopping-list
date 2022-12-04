@@ -1,4 +1,4 @@
-package me.renedo.shopping;
+package me.renedo;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;

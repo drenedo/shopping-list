@@ -25,17 +25,17 @@ class ShoppingListCreatorTest {
         ItemCreator itemCreator = mock(ItemCreator.class);
         ShoppingListCreator creator = new ShoppingListCreator(repository, itemCreator);
         UUID item1Id = UUID.randomUUID();
-        CreateItemRequest item1 = new CreateItemRequest(item1Id,"some-name", 10, "some-unit", null);
+        CreateItemRequest item1 = new CreateItemRequest(item1Id,"some-name", 10, "some-unit", "some-brand", null);
         UUID item2Id = UUID.randomUUID();
-        CreateItemRequest item2 = new CreateItemRequest(item2Id,"some-name", 10, "some-unit", null);
+        CreateItemRequest item2 = new CreateItemRequest(item2Id,"some-name", 10, "some-unit", "some-brand", null);
         UUID id = UUID.randomUUID();
         LocalDateTime now = LocalDateTime.now();
         CreateShoppingListRequest shoppingList = new CreateShoppingListRequest(id, now, "list-name", "list-description", List.of(item1, item2));
 
         creator.create(shoppingList);
 
-        verify(itemCreator, atLeastOnce()).create(new CreateItemRequest(item1Id,"some-name", 10, "some-unit", id));
-        verify(itemCreator, atLeastOnce()).create(new CreateItemRequest(item2Id,"some-name", 10, "some-unit", id));
+        verify(itemCreator, atLeastOnce()).create(new CreateItemRequest(item1Id,"some-name", 10, "some-unit", "some-brand", id));
+        verify(itemCreator, atLeastOnce()).create(new CreateItemRequest(item2Id,"some-name", 10, "some-unit", "some-brand", id));
         verify(repository, atLeastOnce()).save(new ShoppingList(id, now, "list-name", "list-description", null, Status.ACTIVE));
     }
 }

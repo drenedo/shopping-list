@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import me.renedo.shopping.status.domain.Status;
+
 public interface ShoppingListRepository {
 
     ShoppingList save(ShoppingList list);
@@ -14,4 +16,6 @@ public interface ShoppingListRepository {
     Optional<ShoppingList> findById(UUID id);
 
     void delete(UUID id);
+
+    void updateStatus(UUID id, Status status);
 }

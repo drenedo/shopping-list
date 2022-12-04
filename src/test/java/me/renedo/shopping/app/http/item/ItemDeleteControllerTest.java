@@ -2,7 +2,7 @@ package me.renedo.shopping.app.http.item;
 
 import org.junit.jupiter.api.Test;
 
-import me.renedo.shopping.RequestTestCase;
+import me.renedo.RequestTestCase;
 
 class ItemDeleteControllerTest extends RequestTestCase {
 

@@ -17,7 +17,8 @@ import me.renedo.shopping.app.http.error.exception.NotFoundException;
 import me.renedo.shopping.item.domain.Item;
 import me.renedo.shopping.list.application.retrieve.ShoppingListRetriever;
 import me.renedo.shopping.list.domain.ShoppingList;
-import me.renedo.shopping.shared.uuid.UUIDValidator;
+import me.renedo.shared.uuid.UUIDValidator;
+import me.renedo.shopping.status.domain.Status;
 
 @RestController
 public class ListGetController extends V1Controller {
@@ -42,9 +43,9 @@ public class ListGetController extends V1Controller {
             .orElseThrow(() -> new NotFoundException("list not found"));
     }
 
-    record ShoppingListResponse(UUID id, String name, String description, List<ItemResponse> items) {
+    record ShoppingListResponse(UUID id, String name, String description, LocalDateTime date, List<ItemResponse> items, Status status) {
         ShoppingListResponse(ShoppingList list) {
-            this(list.getId(), list.getName(), list.getDescription(), toItemResponses(list.getItems()));
+            this(list.getId(), list.getName(), list.getDescription(), list.getDateTime(), toItemResponses(list.getItems()), list.getStatus());
         }
 
         private static List<ItemResponse> toItemResponses(List<Item> items){
@@ -57,9 +58,9 @@ public class ListGetController extends V1Controller {
         }
     }
 
-    record ItemResponse(UUID id, String name, Integer amount, String unit) {
+    record ItemResponse(UUID id, String name, Integer amount, String unit, String brand, Status status) {
         ItemResponse(Item item) {
-            this(item.getId(), item.getName(), item.getAmount(), item.getUnit());
+            this(item.getId(), item.getName(), item.getAmount(), item.getUnit(), item.getBrand(), item.getStatus());
         }
     }
 }

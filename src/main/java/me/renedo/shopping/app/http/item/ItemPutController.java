@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import me.renedo.shopping.app.http.V1Controller;
 import me.renedo.shopping.item.application.create.ItemCreator;
-import me.renedo.shopping.shared.uuid.UUIDValidator;
+import me.renedo.shared.uuid.UUIDValidator;
 
 @RestController
 final class ItemPutController extends V1Controller {
@@ -23,12 +23,13 @@ final class ItemPutController extends V1Controller {
 
     @PutMapping("/items/{id}")
     public ResponseEntity<String> createItem(@PathVariable String id, @RequestBody Item item) {
-        itemCreator.create(new ItemCreator.CreateItemRequest(UUIDValidator.fromString(id), item.name(), item.amount(), item.unit(),
+        itemCreator.create(new ItemCreator.CreateItemRequest(UUIDValidator.fromString(id), item.name(), item.amount(), item.unit(), item.brand(),
             UUIDValidator.fromString(item.shoppingListId)));
         return ResponseEntity.created(URI.create(id)).body(id);
     }
 
-    record Item(String name, Integer amount, String unit, String shoppingListId) {
+
+    record Item(String name, Integer amount, String unit, String brand, String shoppingListId) {
 
     }
 }

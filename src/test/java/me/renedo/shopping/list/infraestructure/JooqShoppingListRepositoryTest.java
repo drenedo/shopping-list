@@ -15,7 +15,7 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import me.renedo.shopping.InfrastructureTestCase;
+import me.renedo.InfrastructureTestCase;
 import me.renedo.shopping.list.domain.ShoppingList;
 import me.renedo.shopping.status.domain.Status;
 
@@ -45,9 +45,9 @@ class JooqShoppingListRepositoryTest extends InfrastructureTestCase {
         List<ShoppingList> lists = repository.findAllPaginate(LocalDateTime.of(2022, 11, 16, 10, 0, 1), 3);
 
         assertThat(lists, Matchers.hasSize(3));
-        assertThat(lists.get(0).getId().toString(), is("d44f860a-0d91-4529-9f91-ac9f5f29a340"));
-        assertThat(lists.get(1).getId().toString(), is("d44f860a-0d91-4529-9f91-ac9f5f29a34a"));
-        assertThat(lists.get(2).getId().toString(), is("d44f860a-0d91-4529-9f91-ac9f5f29a33a"));
+        assertThat(lists.get(0).getId().toString(), is("d44f860a-0d91-4529-9f91-ac9f5f29a34a"));
+        assertThat(lists.get(1).getId().toString(), is("d44f860a-0d91-4529-9f91-ac9f5f29a33a"));
+        assertThat(lists.get(2).getId().toString(), is("d44f860a-0d91-4529-9f91-ac9f5f29a32a"));
     }
 
     @Test
@@ -58,6 +58,17 @@ class JooqShoppingListRepositoryTest extends InfrastructureTestCase {
 
         assertThat(saved, notNullValue());
         assertThat(saved.getId(), is(uuid));
+    }
+
+    @Test
+    void update_status_of_list(){
+        UUID uuid = UUID.fromString("d44f860a-0d91-4529-9f91-ac9f5f29a34a");
+
+        repository.updateStatus(uuid, Status.INACTIVE);
+
+        Optional<ShoppingList> list = repository.findById(uuid);
+        assertTrue(list.isPresent());
+        assertThat(list.get().getStatus(), is(Status.INACTIVE));
     }
 
     @Test
@@ -80,6 +91,5 @@ class JooqShoppingListRepositoryTest extends InfrastructureTestCase {
         repository.delete(uuid);
 
         assertFalse(repository.findById(uuid).isPresent());
-
     }
 }

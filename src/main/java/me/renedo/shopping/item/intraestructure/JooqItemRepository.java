@@ -30,6 +30,7 @@ public class JooqItemRepository implements ItemRepository {
         itemRecord.setName(item.getName());
         itemRecord.setAmount(item.getAmount());
         itemRecord.setUnit(item.getUnit());
+        itemRecord.setBrand(item.getBrand());
         itemRecord.setList(item.getListId());
         itemRecord.setStatus(String.valueOf(item.getStatus().getId()));
         itemRecord.store();
@@ -52,6 +53,20 @@ public class JooqItemRepository implements ItemRepository {
     }
 
     @Override
+    public void updateStatus(UUID id, Status status) {
+        context.update(ITEM)
+            .set(ITEM.STATUS, String.valueOf(status.getId()))
+            .where(ITEM.ID.eq(id)).execute();
+    }
+
+    @Override
+    public void updateStatus(List<Item> items, Status status) {
+        context.update(ITEM)
+            .set(ITEM.STATUS, String.valueOf(status.getId()))
+            .where(ITEM.ID.in(items.stream().map(Item::getId).toList())).execute();
+    }
+
+    @Override
     public Optional<Item> findById(UUID id) {
         return context.selectFrom(ITEM)
             .where(ITEM.ID.eq(id))
@@ -60,7 +75,7 @@ public class JooqItemRepository implements ItemRepository {
     }
 
     private Item toItem(ItemRecord itemRecord) {
-        return new Item(itemRecord.getId(), itemRecord.getName(), itemRecord.getAmount(), itemRecord.getUnit(), itemRecord.getList(),
-            Status.valueOfId(itemRecord.getStatus()));
+        return new Item(itemRecord.getId(), itemRecord.getName(), itemRecord.getAmount(), itemRecord.getUnit(), itemRecord.getBrand(),
+            itemRecord.getList(), Status.valueOfId(itemRecord.getStatus()));
     }
 }

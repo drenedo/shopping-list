@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 
-import me.renedo.shopping.RequestTestCase;
+import me.renedo.RequestTestCase;
 
 final class ItemPutControllerTest extends RequestTestCase {
 
@@ -21,11 +21,11 @@ final class ItemPutControllerTest extends RequestTestCase {
     void create_bad_item() throws Exception {
         UUID uuid = UUID.randomUUID();
 
-        assertRequestWithBody(PUT, "/api/v1/items/" + uuid, givenItem("some-name", "some-description", LIST_ID, null, null), 409);
+        assertRequestWithBody(PUT, "/api/v1/items/" + uuid, givenItem("some-name", "some-description", LIST_ID, null, null), 406);
     }
 
     @Test
     void create_not_valid_uuid() throws Exception {
-        assertRequestWithBody(PUT, "/api/v1/items/not-valid-uuid", givenItem("some-name", "some-description", UUID.randomUUID(), null, null), 406);
+        assertRequestWithBody(PUT, "/api/v1/items/not-valid-uuid", givenItem("some-name", "some-description", UUID.randomUUID(), 1, null), 406);
     }
 }

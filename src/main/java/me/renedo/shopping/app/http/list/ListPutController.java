@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import me.renedo.shopping.app.http.V1Controller;
 import me.renedo.shopping.item.application.create.ItemCreator.CreateItemRequest;
 import me.renedo.shopping.list.application.create.ShoppingListCreator;
-import me.renedo.shopping.shared.uuid.UUIDValidator;
+import me.renedo.shared.uuid.UUIDValidator;
 
 @RestController
 public final class ListPutController extends V1Controller {
@@ -39,7 +39,7 @@ public final class ListPutController extends V1Controller {
             return List.of();
         } else {
             return items.stream()
-                .map(i -> new CreateItemRequest(i.id(), i.name(), i.amount(), i.unit(), uuid))
+                .map(i -> new CreateItemRequest(i.id(), i.name(), i.amount(), i.unit(), i.brand(), uuid))
                 .toList();
         }
     }
@@ -48,7 +48,7 @@ public final class ListPutController extends V1Controller {
 
     }
 
-    record Item(UUID id, String name, Integer amount, String unit) {
+    record Item(UUID id, String name, Integer amount, String unit, String brand) {
 
     }
 }

@@ -63,6 +63,13 @@ public class JooqShoppingListRepository implements ShoppingListRepository {
             .execute();
     }
 
+    @Override
+    public void updateStatus(UUID id, Status status) {
+        context.update(SHOPPING_LIST)
+            .set(SHOPPING_LIST.STATUS, String.valueOf(status.getId()))
+            .where(SHOPPING_LIST.ID.eq(id)).execute();
+    }
+
     private ShoppingList toShoppingList(ShoppingListRecord slRecord) {
         return new ShoppingList(slRecord.getId(), slRecord.getDatetime(), slRecord.getName(), slRecord.getDescription(), null,
             Status.valueOfId(slRecord.getStatus()));
