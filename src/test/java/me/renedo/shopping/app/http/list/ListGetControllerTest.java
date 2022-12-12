@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import me.renedo.RequestTestCase;
+import me.renedo.NoSecurityRequestTestCase;
 
-class ListGetControllerTest extends RequestTestCase {
+class ListGetControllerTest extends NoSecurityRequestTestCase {
 
     @Test
     void get_paginated() throws Exception {

@@ -4,9 +4,9 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 
-import me.renedo.RequestTestCase;
+import me.renedo.NoSecurityRequestTestCase;
 
-final class ListPutControllerTest extends RequestTestCase {
+final class ListPutControllerTest extends NoSecurityRequestTestCase {
 
     @Test
     void create_list() throws Exception {

@@ -7,9 +7,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
-import me.renedo.RequestTestCase;
+import me.renedo.NoSecurityRequestTestCase;
 
-class TermGetControllerTest extends RequestTestCase {
+class TermGetControllerTest extends NoSecurityRequestTestCase {
 
     @Test
     void get_terms_no_result() throws Exception {

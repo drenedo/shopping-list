@@ -4,9 +4,9 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 
-import me.renedo.RequestTestCase;
+import me.renedo.NoSecurityRequestTestCase;
 
-final class ItemPutControllerTest extends RequestTestCase {
+final class ItemPutControllerTest extends NoSecurityRequestTestCase {
 
     private final UUID LIST_ID = UUID.fromString("d44f860a-0d91-4529-9f91-ac9f5f29a39c");
 

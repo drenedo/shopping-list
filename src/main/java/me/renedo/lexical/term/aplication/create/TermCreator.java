@@ -23,12 +23,19 @@ public class TermCreator {
     @EventListener
     public void on(ItemCreatedEvent itemCreatedEvent){
         logger.info("Item created: {}", itemCreatedEvent);
-        termRepository.find(itemCreatedEvent.getName(), Type.PRODUCT)
-            .ifPresentOrElse(this::sumToTerm, () -> createItemTerm(itemCreatedEvent.getName()));
+        createTermOrSumIfExits(itemCreatedEvent.getName(), Type.PRODUCT);
+        createTermOrSumIfExits(itemCreatedEvent.getUnit(), Type.UNIT);
+        createTermOrSumIfExits(itemCreatedEvent.getBrand(), Type.BRAND);
     }
 
-    private void createItemTerm(String name) {
-        termRepository.save(new Term(name, Type.PRODUCT));
+    private void createTermOrSumIfExits(String term, Type type) {
+        if (term != null && !term.isEmpty()){
+            termRepository.find(term, type).ifPresentOrElse(this::sumToTerm, () -> createItemTerm(term, type));
+        }
+    }
+
+    private void createItemTerm(String name, Type type) {
+        termRepository.save(new Term(name, type));
     }
 
     private void sumToTerm(Term term) {

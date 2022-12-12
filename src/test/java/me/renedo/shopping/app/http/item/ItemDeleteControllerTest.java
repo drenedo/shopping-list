@@ -2,9 +2,9 @@ package me.renedo.shopping.app.http.item;
 
 import org.junit.jupiter.api.Test;
 
-import me.renedo.RequestTestCase;
+import me.renedo.NoSecurityRequestTestCase;
 
-class ItemDeleteControllerTest extends RequestTestCase {
+class ItemDeleteControllerTest extends NoSecurityRequestTestCase {
 
     @Test
     void delete_item() throws Exception {

@@ -14,3 +14,7 @@ var/log/*
 .idea
 .github
 .editorconfig
+
+#project
+users.properties
+application.properties

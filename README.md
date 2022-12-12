@@ -1,8 +1,16 @@
 # Shopping list
 
-This project is under development
+This project is under development.
 
-# Notes and shortcuts
+## What is it?
+
+This app could help you if you need to manage shopping lists.
+
+## Who it works?
+
+The app needs java 17 and access to some database.
+
+## Notes and shortcuts
 
 ### Make a petition
 ```shell

@@ -21,9 +21,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @DirtiesContext
-public abstract class RequestTestCase{
+public abstract class NoSecurityRequestTestCase {
 
     protected final static String PUT = "PUT";
 

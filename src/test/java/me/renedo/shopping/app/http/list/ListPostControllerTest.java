@@ -2,9 +2,9 @@ package me.renedo.shopping.app.http.list;
 
 import org.junit.jupiter.api.Test;
 
-import me.renedo.RequestTestCase;
+import me.renedo.NoSecurityRequestTestCase;
 
-class ListPostControllerTest extends RequestTestCase {
+class ListPostControllerTest extends NoSecurityRequestTestCase {
 
     @Test
     void update_state_of_list() throws Exception {
