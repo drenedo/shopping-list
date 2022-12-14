@@ -7,6 +7,7 @@ import org.jooq.SQLDialect;
 import org.jooq.conf.RenderQuotedNames;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jooq.DefaultConfigurationCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,7 +33,7 @@ public class JOOQConfig {
     }
 
     @Bean
-    public DSLContext ctx() {
-        return DSL.using(ds, SQLDialect.H2, new Settings().withRenderQuotedNames(RenderQuotedNames.EXPLICIT_DEFAULT_UNQUOTED));
+    public DSLContext ctx(@Value("${spring.jooq.sql-dialect}") String dialect) {
+        return DSL.using(ds, SQLDialect.valueOf(dialect), new Settings().withRenderQuotedNames(RenderQuotedNames.EXPLICIT_DEFAULT_UNQUOTED));
     }
 }

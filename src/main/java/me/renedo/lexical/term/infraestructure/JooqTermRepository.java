@@ -51,14 +51,11 @@ public class JooqTermRepository implements TermRepository {
 
     @Override
     public Term save(Term term) {
-        TermRecord termRecord = context.newRecord(TERM);
-        termRecord.setId(term.getId());
-        termRecord.setName(term.getName());
-        termRecord.setTimes(term.getTimes());
-        termRecord.setType(String.valueOf(term.getType().getId()));
-        termRecord.setUpdated(term.getUpdated());
-        termRecord.store();
-        return toTerm(termRecord);
+        context.insertInto(TERM,
+                TERM.ID, TERM.NAME, TERM.TIMES, TERM.TYPE, TERM.UPDATED)
+            .values(term.getId(), term.getName(), term.getTimes(), String.valueOf(term.getType().getId()), term.getUpdated())
+            .execute();
+        return term;
     }
 
     @Override

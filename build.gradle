@@ -33,8 +33,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'com.auth0:java-jwt:4.2.1'
 
-    //TODO Only for test, remove this when it is possible
-    implementation 'com.h2database:h2:1.4.200'
+    if (project.hasProperty("mariadb")) {
+        implementation 'org.mariadb.jdbc:mariadb-java-client'
+    } else {
+        implementation 'com.h2database:h2:1.4.200'
+    }
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
@@ -94,4 +97,8 @@ jooq {
             }
         }
     }
+}
+
+bootJar {
+    launchScript()
 }

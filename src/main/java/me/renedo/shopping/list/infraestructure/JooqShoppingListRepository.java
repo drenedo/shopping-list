@@ -26,15 +26,11 @@ public class JooqShoppingListRepository implements ShoppingListRepository {
 
     @Override
     public ShoppingList save(ShoppingList list) {
-        ShoppingListRecord shoppingListRecord = context.newRecord(SHOPPING_LIST);
-        shoppingListRecord.setId(list.getId());
-        shoppingListRecord.setName(list.getName());
-        shoppingListRecord.setDescription(list.getDescription());
-        shoppingListRecord.setDatetime(list.getDateTime());
-        shoppingListRecord.setStatus(String.valueOf(list.getStatus().getId()));
-        shoppingListRecord.store();
-        return new ShoppingList(shoppingListRecord.getId(), shoppingListRecord.getDatetime(), shoppingListRecord.getName(),
-            shoppingListRecord.getDescription());
+        context.insertInto(SHOPPING_LIST,
+                SHOPPING_LIST.ID, SHOPPING_LIST.NAME, SHOPPING_LIST.DESCRIPTION, SHOPPING_LIST.DATETIME, SHOPPING_LIST.STATUS)
+            .values(list.getId(), list.getName(), list.getDescription(), list.getDateTime(), String.valueOf(list.getStatus().getId()))
+            .execute();
+        return list;
     }
 
     @Override

@@ -10,6 +10,20 @@ This app could help you if you need to manage shopping lists.
 
 The app needs java 17 and access to some database.
 
+## Build
+
+Build for use the backend with MariaDB
+
+```shell
+./gradlew bootJar -Pmariadb
+```
+
+Build for use the backend with H2
+
+```shell
+./gradlew bootJar
+```
+
 ## Notes and shortcuts
 
 ### Make a petition

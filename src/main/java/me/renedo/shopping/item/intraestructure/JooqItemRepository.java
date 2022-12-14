@@ -25,16 +25,12 @@ public class JooqItemRepository implements ItemRepository {
 
     @Override
     public Item save(Item item) {
-        ItemRecord itemRecord = context.newRecord(ITEM);
-        itemRecord.setId(item.getId());
-        itemRecord.setName(item.getName());
-        itemRecord.setAmount(item.getAmount());
-        itemRecord.setUnit(item.getUnit());
-        itemRecord.setBrand(item.getBrand());
-        itemRecord.setList(item.getListId());
-        itemRecord.setStatus(String.valueOf(item.getStatus().getId()));
-        itemRecord.store();
-        return toItem(itemRecord);
+        context.insertInto(ITEM,
+                ITEM.ID, ITEM.NAME, ITEM.AMOUNT, ITEM.UNIT, ITEM.BRAND, ITEM.LIST, ITEM.STATUS)
+            .values(item.getId(), item.getName(), item.getAmount(), item.getUnit(), item.getBrand(), item.getListId(),
+                String.valueOf(item.getStatus().getId()))
+            .execute();
+        return item;
     }
 
     @Override
