@@ -35,7 +35,7 @@ public class JooqTermRepository implements TermRepository {
     @Override
     public Optional<Term> find(String name, Type type) {
         return context.selectFrom(TERM)
-            .where(TERM.NAME.eq(name).and(TERM.TYPE.eq(type.toString())))
+            .where(TERM.NAME.eq(name).and(TERM.TYPE.eq(String.valueOf(type.getId()))))
             .fetchOptional()
             .map(this::toTerm);
     }
@@ -43,7 +43,7 @@ public class JooqTermRepository implements TermRepository {
     @Override
     public List<Term> search(String text, Type type) {
         return context.selectFrom(TERM)
-            .where(TERM.NAME.like(text+"%").and(TERM.TYPE.eq(type.toString())))
+            .where(TERM.NAME.like(text+"%").and(TERM.TYPE.eq(String.valueOf(type.getId()))))
             .orderBy(TERM.TIMES.desc()).limit(10)
             .fetch()
             .map(this::toTerm);
