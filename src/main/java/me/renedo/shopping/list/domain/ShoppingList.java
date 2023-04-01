@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
+import me.renedo.shared.date.ISOFormatter;
 import me.renedo.shopping.item.domain.Item;
 import me.renedo.shopping.status.domain.Status;
 
@@ -75,6 +76,10 @@ public class ShoppingList {
 
     public Status getStatus() {
         return status;
+    }
+
+    public String getStringDateTime() {
+        return ISOFormatter.format(dateTime);
     }
 
     @Override

@@ -1,11 +1,18 @@
 package me.renedo;
 
+import static java.util.Objects.requireNonNull;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
@@ -55,7 +62,11 @@ public abstract class NoSecurityRequestTestCase {
             .andExpect(status().is(expectedStatusCode));
     }
 
-    protected String givenListOfShoppingList(List<String>ids) throws JSONException {
+    protected String givenObjectWithId(String id) throws JSONException {
+        return new JSONObject().put("id", id).toString();
+    }
+
+    protected String givenObjectWithId(List<String>ids) throws JSONException {
         JSONArray jsonArray = new JSONArray();
         ids.forEach(id -> {
             try {
@@ -82,5 +93,22 @@ public abstract class NoSecurityRequestTestCase {
         json.put("amount", amount);
         json.put( "unit", unit);
         return json.toString();
+    }
+
+
+    protected String givenImage(String image, String name) throws JSONException, URISyntaxException, IOException {
+        JSONObject json = new JSONObject();
+        String absoluteImage = givenAbsoluteRouteFromFile(image);
+        File file = new File(absoluteImage);
+        FileInputStream fileInputStreamReader = new FileInputStream(file);
+        byte[] bytes = new byte[(int)file.length()];
+        fileInputStreamReader.read(bytes);
+        json.put("image", Base64.getEncoder().encodeToString(bytes));
+        json.put("name", name);
+        return json.toString();
+    }
+
+    private String givenAbsoluteRouteFromFile(String path) throws URISyntaxException {
+        return Paths.get(requireNonNull(this.getClass().getClassLoader().getResource(path)).toURI()).toFile().getAbsolutePath();
     }
 }

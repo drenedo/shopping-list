@@ -54,6 +54,7 @@ public class JooqShoppingListRepository implements ShoppingListRepository {
 
     @Override
     public void delete(UUID id) {
+        //TODO return int
         context.deleteFrom(SHOPPING_LIST)
             .where(SHOPPING_LIST.ID.eq(id))
             .execute();

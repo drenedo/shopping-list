@@ -1,4 +1,4 @@
-package me.renedo.app.http.error.exception;
+package me.renedo.shared.exception;
 
 public class NotFoundException extends RuntimeException{
 

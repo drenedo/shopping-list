@@ -1,4 +1,7 @@
+
+DROP TABLE IF EXISTS line;
 DROP TABLE IF EXISTS item;
+DROP TABLE IF EXISTS receipt;
 DROP TABLE IF EXISTS shopping_list;
 DROP TABLE IF EXISTS term;
 
@@ -31,5 +34,28 @@ CREATE TABLE IF NOT EXISTS term
     type        char(1) NOT NULL,
     updated     timestamp NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS receipt
+(
+    id          uuid PRIMARY KEY,
+    list        uuid REFERENCES shopping_list (id),
+    site        text NOT NULL,
+    content     text NOT NULL,
+    total       int NOT NULL,
+    created     timestamp NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS line
+(
+    id          uuid PRIMARY KEY,
+    receipt     uuid NOT NULL REFERENCES receipt (id),
+    item        uuid REFERENCES item (id),
+    name        text,
+    amount      int,
+    total       int,
+    created     timestamp NOT NULL
+);
+
+
 --TODO h2 not support index on clob
 --CREATE INDEX term_name_type ON term (name, type);

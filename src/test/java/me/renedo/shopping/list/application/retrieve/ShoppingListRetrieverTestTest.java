@@ -21,7 +21,7 @@ class ShoppingListRetrieverTestTest {
         ItemRetriever itemRetriever = mock(ItemRetriever.class);
         ShoppingListRetriever retriever = new ShoppingListRetriever(repository, itemRetriever);
 
-        retriever.rerievePaginated(null, 5);
+        retriever.retrievePaginated(null, 5);
 
         verify(repository, atMostOnce()).findAllPaginate(any(LocalDateTime.class), eq(5));
     }
@@ -33,7 +33,7 @@ class ShoppingListRetrieverTestTest {
         ShoppingListRetriever retriever = new ShoppingListRetriever(repository, itemRetriever);
         LocalDateTime date = LocalDateTime.of(2021, 1, 1, 20, 23);
 
-        retriever.rerievePaginated(date, 5);
+        retriever.retrievePaginated(date, 5);
 
         verify(repository, atMostOnce()).findAllPaginate(date, 5);
     }

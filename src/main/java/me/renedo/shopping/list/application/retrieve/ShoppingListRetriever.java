@@ -28,7 +28,7 @@ public class ShoppingListRetriever {
             .map(list -> new ShoppingList(list, itemRetriever.retrieveListItems(list.getId())));
     }
 
-    public List<ShoppingList> rerievePaginated(LocalDateTime localDateTime, int pageSize){
+    public List<ShoppingList> retrievePaginated(LocalDateTime localDateTime, int pageSize){
         return repository.findAllPaginate(localDateTime, pageSize);
     }
 }
