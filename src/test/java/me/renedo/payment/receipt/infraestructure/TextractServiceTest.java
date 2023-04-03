@@ -1,6 +1,7 @@
 package me.renedo.payment.receipt.infraestructure;
 
 import static java.util.Objects.requireNonNull;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
@@ -35,6 +36,16 @@ class TextractServiceTest {
         assertThat(read.getCash(), is(false));
         assertThat(read.getTotal(), is(BigDecimal.valueOf(35.21)));
         assertThat(read.getLines(), Matchers.hasSize(7));
+    }
+
+    @Test
+    void get_text_from_galp() throws URISyntaxException  {
+        OcrRead read = service.read(givenAbsoluteRouteFromFile("tickets/ticket_galp.jpeg"));
+
+        assertThat(read.getSite(), is("galp"));
+        assertThat(read.getCash(), nullValue());
+        assertThat(read.getTotal(), is(BigDecimal.valueOf(50.01)));
+        assertThat(read.getLines(), Matchers.hasSize(0));
     }
 
     @Test

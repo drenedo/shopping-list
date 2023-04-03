@@ -95,6 +95,12 @@ public abstract class NoSecurityRequestTestCase {
         return json.toString();
     }
 
+    protected String givenSimple(String site, Double total) throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put("site", site);
+        json.put("total", total);
+        return json.toString();
+    }
 
     protected String givenImage(String image, String name) throws JSONException, URISyntaxException, IOException {
         JSONObject json = new JSONObject();

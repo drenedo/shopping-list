@@ -22,6 +22,19 @@ import me.renedo.payment.receipt.domain.ocr.OcrService;
 class ReceiptCreatorTest {
 
     @Test
+    void save_simple_item() {
+        ReceiptRepository repository = mock(ReceiptRepository.class);
+        OcrService ocrService = mock(OcrService.class);
+        LineRepository lineRepository = mock(LineRepository.class);
+        ReceiptCreator creator = new ReceiptCreator(ocrService, repository, lineRepository);
+        UUID id = UUID.randomUUID();
+
+        creator.create(id, "some-site", 45.2D);
+
+        verify(repository, atLeastOnce()).save(any(Receipt.class));
+    }
+
+    @Test
     void save_a_valid_item() {
         ReceiptRepository repository = mock(ReceiptRepository.class);
         OcrService ocrService = mock(OcrService.class);

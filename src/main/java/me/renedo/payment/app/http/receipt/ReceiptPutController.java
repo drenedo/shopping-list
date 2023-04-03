@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import me.renedo.app.http.V1Controller;
+import me.renedo.payment.app.http.receipt.record.ReceiptDetailResponse;
 import me.renedo.payment.receipt.application.create.ReceiptCreator;
 import me.renedo.payment.receipt.domain.Receipt;
 import me.renedo.shared.uuid.UUIDValidator;
@@ -28,7 +29,7 @@ public class ReceiptPutController extends V1Controller {
     }
 
     @PutMapping("/receipt/{id}")
-    public ResponseEntity<Receipt> createItem(@PathVariable String id, @RequestBody Image image) throws IOException {
+    public ResponseEntity<ReceiptDetailResponse> createItem(@PathVariable String id, @RequestBody Image image) throws IOException {
         File imageFile = createImageFile(image);
         Receipt receipt;
         try {
@@ -36,7 +37,13 @@ public class ReceiptPutController extends V1Controller {
         } finally {
             deleteImageFile(imageFile);
         }
-        return ResponseEntity.created(URI.create(id)).body(receipt);
+        return ResponseEntity.created(URI.create(id)).body(new ReceiptDetailResponse(receipt));
+    }
+
+    @PutMapping("/receipt/simple/{id}")
+    public ResponseEntity<ReceiptDetailResponse> createItem(@PathVariable String id, @RequestBody SimpleReceipt receipt) {
+        return ResponseEntity.created(URI.create(id))
+            .body(new ReceiptDetailResponse(receiptCreator.create(UUIDValidator.fromString(id), receipt.site, receipt.total())));
     }
 
     private static void deleteImageFile(File file){
@@ -54,5 +61,9 @@ public class ReceiptPutController extends V1Controller {
         public byte[] content(){
             return Base64.getDecoder().decode(image);
         }
+    }
+
+    record SimpleReceipt(String site, Double total) {
+
     }
 }

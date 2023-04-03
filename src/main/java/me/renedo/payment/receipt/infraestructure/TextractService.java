@@ -44,7 +44,7 @@ public class TextractService implements OcrService {
     public OcrRead read(String path) {
         Document myDoc = getDocument(path);
 
-        List<FeatureType> featureTypes = new ArrayList<FeatureType>();
+        List<FeatureType> featureTypes = new ArrayList();
         featureTypes.add(FeatureType.FORMS);
 
         AnalyzeDocumentRequest analyzeDocumentRequest = AnalyzeDocumentRequest.builder()
@@ -91,7 +91,7 @@ public class TextractService implements OcrService {
         } else if (prePrevious != null && previous != null && previous.matches("\\d\\d")) {
             return new BigDecimal((prePrevious.matches("\\d?\\d") ? prePrevious : 0) + "." + previous);
         } else {
-            return null;
+            return BigDecimal.ZERO;
         }
     }
 
@@ -106,8 +106,13 @@ public class TextractService implements OcrService {
 
     private BigDecimal getTotal(Optional<Block> totalLine, List<Block> blocks) {
         BigDecimal total = totalLine.map(this::getAmountOfLine).orElse(null);
-        if (total == null && totalLine.isPresent()) {
-            return getNextLine(blocks, totalLine.get()).map(this::getAmountOfLine).orElse(null);
+        if ((total == null || total.doubleValue() <= 0) && totalLine.isPresent()) {
+            BigDecimal nextLine =  getNextLine(blocks, totalLine.get()).map(this::getAmountOfLine).orElse(null);
+            if(nextLine.doubleValue() <=0){
+                return getPreviousLine(blocks, totalLine.get()).map(this::getAmountOfLine).orElse(null);
+            } else {
+                return nextLine;
+            }
         } else {
             return total;
         }
