@@ -1,11 +1,15 @@
 package me.renedo.payment.app.http.receipt;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.Base64;
+
+import javax.imageio.ImageIO;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,9 +56,29 @@ public class ReceiptPutController extends V1Controller {
 
     private static File createImageFile(Image image) throws IOException {
         byte[] imageByte = image.content();
+        BufferedImage bufferedImage = scale(getBufferedImage(imageByte));
         File imageFile = File.createTempFile(LocalDateTime.now().toString(), image.name());
-        new FileOutputStream(imageFile).write(imageByte);
+        ImageIO.write(bufferedImage, "jpg", imageFile);
         return imageFile;
+    }
+
+    private static BufferedImage scale(BufferedImage source){
+        int w = source.getWidth();
+        int h = source.getHeight();
+        if(w > 1200){
+            BufferedImage scaleImage = new BufferedImage(1200, h * 1200 / w, source.getType());
+            Graphics2D g = scaleImage.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g.drawImage(source, 0, 0, 1200, h * 1200 / w, 0, 0, w, h, null);
+            g.dispose();
+            return scaleImage;
+        } else {
+            return source;
+        }
+    }
+
+    private static BufferedImage getBufferedImage(byte[] imageByte) throws IOException {
+        return ImageIO.read(new ByteArrayInputStream(imageByte));
     }
 
     record Image(String image, String name) {
