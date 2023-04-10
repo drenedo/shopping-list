@@ -13,5 +13,7 @@ public interface ReceiptRepository {
 
     List<Receipt> findAllPaginate(LocalDateTime time, int pageSize);
 
+    List<Receipt> findAllBetweenDates(LocalDateTime start, LocalDateTime end);
+
     int delete(UUID id);
 }

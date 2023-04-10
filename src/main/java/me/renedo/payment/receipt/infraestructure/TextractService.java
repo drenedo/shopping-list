@@ -6,10 +6,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -53,18 +57,61 @@ public class TextractService implements OcrService {
             .build();
 
         AnalyzeDocumentResponse analyzeDocument = textractClient.analyzeDocument(analyzeDocumentRequest);
-        List<Block> blocks = analyzeDocument.blocks().stream().filter(b -> b.blockType().equals(BlockType.LINE)).toList();
+        List<String> lines = convertBlocksToLines(analyzeDocument.blocks().stream().filter(b -> b.blockType().equals(BlockType.LINE)).toList());
 
-        Optional<Block> totalLine = blocks.stream().filter(this::isTotalLine).findFirst();
-        BigDecimal total = getTotal(totalLine, blocks);
-        List<Block> previousBlocks = totalLine.map(b -> blocks.subList(0,blocks.indexOf(b))).orElse(blocks);
-        return new OcrRead(getSite(blocks), total, getOcrLines(previousBlocks, total), null, getIsInCash(blocks),
-            previousBlocks.stream().map(Block::text).collect(Collectors.joining("\n")));
+        Optional<String> totalLine = lines.stream().filter(this::isTotalLine).findFirst();
+        BigDecimal total = getTotal(totalLine, lines);
+        List<String> previousLines = totalLine.map(b -> lines.subList(0, lines.indexOf(b))).orElse(lines);
+        return new OcrRead(getSite(lines), total, getOcrLines(previousLines, total), null, getIsInCash(lines),
+            String.join("\n", previousLines));
     }
 
+    protected List<String> convertBlocksToLines(List<Block> blocks) {
+        if (blocks == null || blocks.isEmpty()) {
+            return List.of();
+        }
+        List<String> lines = new ArrayList<>();
+        Map<Float, String> parts = new TreeMap();
+        Block firstBlock = blocks.get(0);
+        parts.put(firstBlock.geometry().boundingBox().left(), firstBlock.text());
+        for (Block block : blocks.subList(1, blocks.size())) {
+            if (Math.abs(roundTop(firstBlock) - roundTop(block)) < 0.017) {
+                parts.put(block.geometry().boundingBox().left(), block.text());
+            } else {
+                firstBlock = block;
+                lines.add(String.join(" ", parts.values()));
+                parts = new TreeMap();
+                parts.put(block.geometry().boundingBox().left(), block.text());
+            }
+        }
+        lines.add(parts.values().stream().collect(Collectors.joining(" ")));
+        return lines;
+    }
 
-    private Boolean getIsInCash(List<Block> blocks) {
-        String lowerText = blocks.stream().map(Block::text).collect(Collectors.joining("\n")).toLowerCase();
+    protected List<OcrLine> getOcrLines(List<String> lines, BigDecimal total) {
+        //TODO review previous line
+        List<OcrLine> complexLines = lines.stream()
+            .filter(b -> b.split(" ").length > 2 && b.matches(".*\\d?\\d?[\\.,/]\\d\\d?.?.?") &&
+                Arrays.stream(b.split(" ")).filter(w -> w.matches("\\d?\\d?[\\.,/]\\d\\d?")).count() <= 2)
+            .filter(l -> total != null && ofNullable(getAmountOfLine(l)).map(a -> a.compareTo(total) < 0).orElse(false))
+            .map(l -> toOcrLineWithPrevious(getPreviousLine(lines, l), l))
+            .toList();
+        List<OcrLine> simpleLines = lines.stream()
+            .filter(b -> b.matches("\\d?\\d?[\\.,/]\\d\\d?.?.?") &&
+                ofNullable(getAmountOfLine(b)).map(a -> a.compareTo(total) < 0).orElse(false))
+            .map(b -> toOcrLine(getPreviousLine(lines, b), b))
+            .toList();
+        return Stream.concat(complexLines.stream(), simpleLines.stream()).toList();
+    }
+
+    private Double roundTop(Block block) {
+        DecimalFormat df = new DecimalFormat("#.####");
+        df.setRoundingMode(RoundingMode.HALF_UP);
+        return Double.valueOf(df.format(block.geometry().boundingBox().top()));
+    }
+
+    private Boolean getIsInCash(List<String> lines) {
+        String lowerText = String.join("\n", lines).toLowerCase();
         if ((lowerText.contains("efectivo") || lowerText.contains("entregado") || lowerText.contains("contado")) &&
             (!lowerText.contains("tarjeta") && !lowerText.contains("bancaria"))) {
             return true;
@@ -76,13 +123,13 @@ public class TextractService implements OcrService {
         }
     }
 
-    private BigDecimal getAmountOfLine(Block block) {
-        BigDecimal amount = getRealAmountOfLine(block);
-        return amount != null ? amount : extractAmountFromComplexBlock(block);
+    private BigDecimal getAmountOfLine(String line) {
+        BigDecimal amount = getRealAmountOfLine(line);
+        return amount != null ? amount : extractAmountFromComplexLine(line);
     }
 
-    private BigDecimal extractAmountFromComplexBlock(Block block) {
-        String[] words = block.text().replaceAll("[\\.,_/]", " ").split(" ");
+    private BigDecimal extractAmountFromComplexLine(String line) {
+        String[] words = line.replaceAll("[\\.,_/]", " ").split(" ");
         String last = words.length >= 1 ? words[words.length - 1] : null;
         String previous = words.length >= 2 ? words[words.length - 2] : null;
         String prePrevious = words.length >= 3 ? words[words.length - 3] : null;
@@ -95,20 +142,20 @@ public class TextractService implements OcrService {
         }
     }
 
-    private BigDecimal getRealAmountOfLine(Block block) {
+    private BigDecimal getRealAmountOfLine(String line) {
         try {
-            return BigDecimal.valueOf(Double.parseDouble(block.text().replaceAll(",", ".")));
+            return BigDecimal.valueOf(Double.parseDouble(line.replaceAll(",", ".")));
         } catch (NumberFormatException nfe) {
             return null;
         }
     }
 
 
-    private BigDecimal getTotal(Optional<Block> totalLine, List<Block> blocks) {
+    private BigDecimal getTotal(Optional<String> totalLine, List<String> blocks) {
         BigDecimal total = totalLine.map(this::getAmountOfLine).orElse(null);
         if ((total == null || total.doubleValue() <= 0) && totalLine.isPresent()) {
-            BigDecimal nextLine =  getNextLine(blocks, totalLine.get()).map(this::getAmountOfLine).orElse(null);
-            if(nextLine.doubleValue() <=0){
+            BigDecimal nextLine = getNextLine(blocks, totalLine.get()).map(this::getAmountOfLine).orElse(BigDecimal.ZERO);
+            if (nextLine.doubleValue() <= 0) {
                 return getPreviousLine(blocks, totalLine.get()).map(this::getAmountOfLine).orElse(null);
             } else {
                 return nextLine;
@@ -118,52 +165,50 @@ public class TextractService implements OcrService {
         }
     }
 
-    private Optional<Block> getNextLine(List<Block> blocks, Block totalLine) {
-        int position = blocks.indexOf(totalLine) + 1;
-        return position < blocks.size() ? Optional.of(blocks.get(position)) : Optional.empty();
+    private Optional<String> getNextLine(List<String> lines, String totalLine) {
+        return getPosition(lines, lines.indexOf(totalLine) + 1);
     }
 
-    private Optional<Block> getPreviousLine(List<Block> blocks, Block totalLine) {
-        int position = blocks.indexOf(totalLine) - 1;
-        return position < blocks.size() ? Optional.of(blocks.get(position)) : Optional.empty();
+    private Optional<String> getPreviousLine(List<String> lines, String totalLine) {
+        return getPosition(lines, lines.indexOf(totalLine) - 1);
     }
 
-    private boolean isTotalLine(Block block) {
-        String line = block.text().toUpperCase();
-        return line.matches(".{0,5}?IMPORTE.*") || line.matches(".{0,7}?TOTA?L?.*") ||
-            line.matches(".{0,5}?TARJETA.*")
-            || line.matches(".{0,5}?EFECTIVO.*") || line.matches(".{0,5}?CONTADO,*");
+    private Optional<String> getPosition(List<String> lines, int position) {
+        return position < lines.size() ? Optional.of(lines.get(position)) : Optional.empty();
     }
 
-    private List<OcrLine> getOcrLines(List<Block> blocks, BigDecimal total) {
-        List<OcrLine> complexLines = blocks.stream()
-            .filter(b -> b.text().split(" ").length > 2 && b.text().matches(".*\\d?\\d?[\\.\\,/]\\d\\d?.?.?") &&
-                Arrays.stream(b.text().split(" ")).filter(w -> w.matches("\\d?\\d?[\\.\\,/]\\d\\d?")).count() <= 2)
-            .filter(l -> total != null && ofNullable(getAmountOfLine(l)).map(a -> a.compareTo(total) < 0).orElse(false))
-            .map(this::toOcrLine)
-            .toList();
-        List<OcrLine> simpleLines = blocks.stream()
-            .filter(b -> b.text().matches("\\d?\\d?[\\.\\,/]\\d\\d?.?.?") &&
-                ofNullable(getAmountOfLine(b)).map(a -> a.compareTo(total) < 0).orElse(false))
-            .map(b -> toOcrLine(getPreviousLine(blocks, b), b))
-            .toList();
-        return Stream.concat(complexLines.stream(), simpleLines.stream()).toList();
-
+    private boolean isTotalLine(String line) {
+        String upperLine = line.toUpperCase();
+        return upperLine.matches(".{0,5}?IMPORTE.*") || upperLine.matches(".{0,7}?TOTA?L?.*") ||
+            upperLine.matches(".{0,5}?TARJETA.*")
+            || upperLine.matches(".{0,5}?EFECTIVO.*") || upperLine.matches(".{0,5}?CONTADO,*");
     }
 
-    private OcrLine toOcrLine(Optional<Block> previousLine, Block b) {
-        return new OcrLine(previousLine.map(Block::text).orElse(null), null, null, getAmountOfLine(b),
-            previousLine.map(Block::text).orElse("") + " " + b.text());
+    private OcrLine toOcrLine(Optional<String> previousLine, String b) {
+        return new OcrLine(previousLine.orElse(null), null, null, getAmountOfLine(b),
+            previousLine.orElse("") + " " + b);
     }
 
-    private OcrLine toOcrLine(Block block) {
-        BigDecimal amount = getAmountOfLine(block);
-        return new OcrLine(getName(block), null, null, amount, block.text());
+    private OcrLine toOcrLineWithPrevious(Optional<String> previousLine, String line) {
+        BigDecimal amount = getAmountOfLine(line);
+        String name = getName(line);
+        boolean isCorrectName = name.matches(".*\\D{4}.*");
+        String preName = isCorrectName ? name : previousLine.orElse(name);
+        Integer number = isCorrectName ? getNumberOfItems(line) : previousLine.map(this::getNumberOfItems).orElseGet(() -> getNumberOfItems(line));
+        String strNumber = String.valueOf(number);
+        String finalName =
+            preName.startsWith(strNumber) && preName.length() > strNumber.length() ? preName.substring(strNumber.length() + 1) : preName;
+        return new OcrLine(finalName, number, null, amount, line);
     }
 
-    private String getName(Block block) {
+    private Integer getNumberOfItems(String line) {
+        String[] words = line.split(" ");
+        return words.length > 0 && words[0].matches("\\d\\d?") ? Integer.valueOf(words[0]) : null;
+    }
+
+    private String getName(String line) {
         StringBuilder name = new StringBuilder();
-        String[] words = block.text().split(" ");
+        String[] words = line.split(" ");
         for (String word : words) {
             if (!word.matches("\\d?\\d.?\\d\\d?.?.?")) {
                 name.append(word);
@@ -179,8 +224,8 @@ public class TextractService implements OcrService {
         }
     }
 
-    private String getSite(List<Block> blocks) {
-        return blocks.stream().findFirst().map(Block::text).orElse(null);
+    private String getSite(List<String> lines) {
+        return lines.stream().findFirst().orElse(null);
     }
 
     private static Document getDocument(String path) {

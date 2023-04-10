@@ -35,7 +35,7 @@ public class ReceiptCreator {
     }
 
     public Receipt create(UUID id, String site, Double amount){
-        Receipt receipt = new Receipt(id, null, site, BigDecimal.valueOf(amount), site.toUpperCase(), null, null);
+        Receipt receipt = new Receipt(id, null, site, BigDecimal.valueOf(amount), site.toUpperCase(), null, null, null);
         repository.save(receipt);
         return receipt;
     }

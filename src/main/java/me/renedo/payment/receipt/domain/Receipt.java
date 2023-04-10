@@ -22,23 +22,33 @@ public class Receipt {
 
     private final List<Line> lines;
 
+    private final Boolean cash;
+
     private final LocalDateTime created;
 
+    private final Integer lineNumber;
+
     public Receipt(Receipt receipt, List<Line> lines) {
-        this(receipt.getId(), receipt.getList(), receipt.getText(), receipt.getTotal(), receipt.getSite(), lines, receipt.getCreated());
+        this(receipt.getId(), receipt.getList(), receipt.getText(), receipt.getTotal(), receipt.getSite(), lines, receipt.getCreated(),
+            receipt.getCash(), lines.size());
     }
 
-    public Receipt(UUID id, UUID list, String text, BigDecimal total, String site, List<Line> lines, LocalDateTime created) {
-        if(id == null){
+    public Receipt(UUID id, UUID list, String text, BigDecimal total, String site, List<Line> lines, LocalDateTime created, Boolean cash) {
+        this(id, list, text, total, site, lines, created, cash, null);
+    }
+
+    public Receipt(UUID id, UUID list, String text, BigDecimal total, String site, List<Line> lines, LocalDateTime created, Boolean cash,
+        Integer lineNumber) {
+        if (id == null) {
             throw new NotAcceptableException("Id is mandatory");
         }
-        if(text == null || text.isEmpty()){
+        if (text == null || text.isEmpty()) {
             throw new NotAcceptableException("Text is mandatory");
         }
-        if(total == null){
+        if (total == null) {
             throw new NotAcceptableException("Total amount is mandatory");
         }
-        if(site == null){
+        if (site == null) {
             throw new NotAcceptableException("Site is mandatory");
         }
         this.id = id;
@@ -48,6 +58,8 @@ public class Receipt {
         this.site = site;
         this.lines = lines;
         this.created = created == null ? LocalDateTime.now() : created;
+        this.cash = cash;
+        this.lineNumber = lineNumber != null ? lineNumber : (lines == null ? null : lines.size());
     }
 
     public UUID getId() {
@@ -80,5 +92,13 @@ public class Receipt {
 
     public String getStringCreated() {
         return ISOFormatter.format(created);
+    }
+
+    public Integer getLineNumber() {
+        return lineNumber;
+    }
+
+    public Boolean getCash() {
+        return cash;
     }
 }

@@ -19,8 +19,7 @@ import me.renedo.shared.uuid.UUIDValidator;
 class JooqReceiptRepositoryTest extends InfrastructureTestCase {
     private final JooqReceiptRepository jooqReceiptRepository;
 
-    @Autowired
-    JooqReceiptRepositoryTest(JooqReceiptRepository jooqReceiptRepository) {
+    @Autowired JooqReceiptRepositoryTest(JooqReceiptRepository jooqReceiptRepository) {
         this.jooqReceiptRepository = jooqReceiptRepository;
     }
 
@@ -28,14 +27,15 @@ class JooqReceiptRepositoryTest extends InfrastructureTestCase {
     void save_receipt() {
         UUID uuid = UUID.randomUUID();
 
-        Receipt saved = jooqReceiptRepository.save(new Receipt(uuid, null, "some-text", new BigDecimal(10), "some-site", null, LocalDateTime.now()));
+        Receipt saved =
+            jooqReceiptRepository.save(new Receipt(uuid, null, "some-text", new BigDecimal(10), "some-site", null, LocalDateTime.now(), true));
 
         assertThat(saved, notNullValue());
         assertThat(saved.getId(), is(uuid));
     }
 
     @Test
-    void fins_paginate_all() {
+    void find_paginate_all() {
         List<Receipt> receipts = jooqReceiptRepository.findAllPaginate(LocalDateTime.of(2023, 2, 16, 14, 0), 10);
 
         assertThat(receipts.size(), is(4));
@@ -46,7 +46,7 @@ class JooqReceiptRepositoryTest extends InfrastructureTestCase {
     }
 
     @Test
-    void fins_paginate_page() {
+    void find_paginate_page() {
         List<Receipt> receipts = jooqReceiptRepository.findAllPaginate(LocalDateTime.of(2023, 2, 16, 12, 0), 10);
 
         assertThat(receipts.size(), is(2));
@@ -55,10 +55,17 @@ class JooqReceiptRepositoryTest extends InfrastructureTestCase {
     }
 
     @Test
-    void fins_paginate_none() {
+    void find_paginate_none() {
         List<Receipt> receipts = jooqReceiptRepository.findAllPaginate(LocalDateTime.of(2023, 2, 14, 12, 0), 10);
 
         assertThat(receipts.size(), is(0));
+    }
+
+    @Test
+    void find_between_dates() {
+        List<Receipt> receipts = jooqReceiptRepository.findAllBetweenDates(LocalDateTime.of(2023, 2, 16, 0, 0), LocalDateTime.of(2023, 2, 16, 23, 59));
+
+        assertThat(receipts.size(), is(4));
     }
 
     @Test

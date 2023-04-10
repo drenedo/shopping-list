@@ -42,7 +42,9 @@ CREATE TABLE IF NOT EXISTS receipt
     site        text NOT NULL,
     content     text NOT NULL,
     total       int NOT NULL,
-    created     timestamp NOT NULL
+    cash        boolean,
+    created     timestamp NOT NULL,
+    line_number int
 );
 
 CREATE TABLE IF NOT EXISTS line

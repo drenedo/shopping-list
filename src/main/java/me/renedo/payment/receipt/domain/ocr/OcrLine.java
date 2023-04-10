@@ -11,15 +11,15 @@ import me.renedo.payment.line.domain.Line;
 public class OcrLine {
     private final String name;
     private final Integer amount;
-    private final BigDecimal prize;
+    private final BigDecimal price;
     private final BigDecimal total;
 
     private final String text;
 
-    public OcrLine(String name, Integer amount, BigDecimal prize, BigDecimal total, String text) {
+    public OcrLine(String name, Integer amount, BigDecimal price, BigDecimal total, String text) {
         this.name = name;
         this.amount = amount;
-        this.prize = prize;
+        this.price = price;
         this.total = total;
         this.text = text;
     }
@@ -32,8 +32,8 @@ public class OcrLine {
         return amount;
     }
 
-    public BigDecimal getPrize() {
-        return prize;
+    public BigDecimal getPrice() {
+        return price;
     }
 
     public BigDecimal getTotal() {

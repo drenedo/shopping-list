@@ -57,6 +57,6 @@ public class OcrRead {
 
     public Receipt toReceipt(UUID id, UUID list) {
         return new Receipt(id, list, text, total, site.toUpperCase(), lines.stream().map(OcrLine::toLine).collect(Collectors.toList()),
-            LocalDateTime.now());
+            LocalDateTime.now(), cash);
     }
 }

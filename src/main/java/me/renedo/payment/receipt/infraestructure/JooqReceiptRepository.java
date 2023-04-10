@@ -23,8 +23,7 @@ public class JooqReceiptRepository implements ReceiptRepository {
         this.context = context;
     }
 
-    @Override public
-    Optional<Receipt> findById(UUID id) {
+    @Override public Optional<Receipt> findById(UUID id) {
         return context.selectFrom(RECEIPT)
             .where(RECEIPT.ID.eq(id))
             .fetchOptional()
@@ -35,8 +34,9 @@ public class JooqReceiptRepository implements ReceiptRepository {
     public Receipt save(Receipt receipt) {
         Money total = new Money(receipt.getTotal());
         context.insertInto(RECEIPT,
-                RECEIPT.ID, RECEIPT.LIST, RECEIPT.CONTENT, RECEIPT.SITE, RECEIPT.TOTAL, RECEIPT.CREATED)
-            .values(receipt.getId(), receipt.getList(), receipt.getText(), receipt.getSite(), total.getMoneyWithoutDecimals(), receipt.getCreated())
+                RECEIPT.ID, RECEIPT.LIST, RECEIPT.CONTENT, RECEIPT.SITE, RECEIPT.TOTAL, RECEIPT.CREATED, RECEIPT.CASH, RECEIPT.LINE_NUMBER)
+            .values(receipt.getId(), receipt.getList(), receipt.getText(), receipt.getSite(), total.getMoneyWithoutDecimals(), receipt.getCreated(),
+                receipt.getCash(), receipt.getLineNumber())
             .execute();
         return receipt;
     }
@@ -53,6 +53,15 @@ public class JooqReceiptRepository implements ReceiptRepository {
     }
 
     @Override
+    public List<Receipt> findAllBetweenDates(LocalDateTime start, LocalDateTime end) {
+        return context.selectFrom(RECEIPT)
+            .where(RECEIPT.CREATED.between(start, end))
+            .orderBy(RECEIPT.CREATED.desc())
+            .fetch()
+            .map(this::toReceipt);
+    }
+
+    @Override
     public int delete(UUID id) {
         return context.deleteFrom(RECEIPT)
             .where(RECEIPT.ID.eq(id))
@@ -61,6 +70,6 @@ public class JooqReceiptRepository implements ReceiptRepository {
 
     private Receipt toReceipt(ReceiptRecord record) {
         return new Receipt(record.getId(), record.getList(), record.getContent(), new Money(record.getTotal()).getMoney(), record.getSite(), null,
-            record.getCreated());
+            record.getCreated(), record.getCash(), record.getLineNumber());
     }
 }

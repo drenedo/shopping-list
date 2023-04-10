@@ -16,7 +16,7 @@ class ReceiptTest {
 
     @Test
     public void new_receipt_all_ok() {
-        Receipt receipt = new Receipt(UUID.randomUUID(), null, "some-text", new BigDecimal(10), "some-site", null, LocalDateTime.now());
+        Receipt receipt = new Receipt(UUID.randomUUID(), null, "some-text", new BigDecimal(10), "some-site", null, LocalDateTime.now(), true);
 
         assertThat(receipt.getText(), is("some-text"));
         assertThat(receipt.getSite(), is("some-site"));
@@ -25,21 +25,25 @@ class ReceiptTest {
 
     @Test
     public void id_is_null() {
-        assertThrows(NotAcceptableException.class, () -> new Receipt(null, null, "some-text", new BigDecimal(10), "some-site", null, LocalDateTime.now()));
+        assertThrows(NotAcceptableException.class,
+            () -> new Receipt(null, null, "some-text", new BigDecimal(10), "some-site", null, LocalDateTime.now(), true));
     }
 
     @Test
     public void text_is_null() {
-        assertThrows(NotAcceptableException.class, () -> new Receipt(UUID.randomUUID(), null, null, new BigDecimal(10), "some-site", null, LocalDateTime.now()));
+        assertThrows(NotAcceptableException.class,
+            () -> new Receipt(UUID.randomUUID(), null, null, new BigDecimal(10), "some-site", null, LocalDateTime.now(), true));
     }
 
     @Test
     public void total_is_null() {
-        assertThrows(NotAcceptableException.class, () -> new Receipt(UUID.randomUUID(), null, "some-text", null, "some-site", null, LocalDateTime.now()));
+        assertThrows(NotAcceptableException.class,
+            () -> new Receipt(UUID.randomUUID(), null, "some-text", null, "some-site", null, LocalDateTime.now(), true));
     }
 
     @Test
     public void site_is_null() {
-        assertThrows(NotAcceptableException.class, () -> new Receipt(UUID.randomUUID(), null, "some-text", new BigDecimal(10), null, null, LocalDateTime.now()));
+        assertThrows(NotAcceptableException.class,
+            () -> new Receipt(UUID.randomUUID(), null, "some-text", new BigDecimal(10), null, null, LocalDateTime.now(), true));
     }
 }

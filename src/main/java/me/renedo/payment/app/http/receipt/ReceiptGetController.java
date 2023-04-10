@@ -1,7 +1,9 @@
 package me.renedo.payment.app.http.receipt;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,4 +40,10 @@ public class ReceiptGetController extends V1Controller {
             .map(ReceiptDetailResponse::new)
             .orElseThrow(() -> new NotFoundException("Receipt not found"));
     }
+
+    @GetMapping("/receipts/statistics/total/current/month")
+    public double totalCurrentMonth(@RequestParam(value = "time-zone", required = false) Optional<String> timeZone) {
+        return retriever.retrieveSumOfCurrentMonth(timeZone.map(ZoneId::of).orElse(ZoneId.systemDefault()));
+    }
+
 }
