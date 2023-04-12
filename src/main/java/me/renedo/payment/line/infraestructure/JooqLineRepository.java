@@ -31,6 +31,14 @@ public class JooqLineRepository implements LineRepository {
         return line;
     }
 
+    @Override public boolean update(Line line) {
+        return context.update(LINE)
+            .set(LINE.NAME, line.getName())
+            .set(LINE.TOTAL, new Money(line.getTotal()).getMoneyWithoutDecimals())
+            .where(LINE.ID.eq(line.getId()))
+            .execute() > 0;
+    }
+
     @Override
     public List<Line> findInReceipt(UUID receiptId) {
         return context.selectFrom(LINE)

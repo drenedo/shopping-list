@@ -9,6 +9,8 @@ public interface ReceiptRepository {
 
     Optional<Receipt> findById(UUID id);
 
+    boolean update(Receipt receipt);
+
     Receipt save(Receipt receipt);
 
     List<Receipt> findAllPaginate(LocalDateTime time, int pageSize);

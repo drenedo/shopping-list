@@ -28,7 +28,7 @@ public class ReceiptCreator {
     public Receipt create(CreateReceiptRequest request){
         OcrRead read = ocrService.read(request.path());
         Receipt receipt = read.toReceipt(request.id(), request.list());
-        repository.save(receipt);
+        repository.save(receipt.getReceiptWithCorrectLinesIfIsPossible());
         //FIXME only one insert not n
         receipt.getLines().forEach(l -> lineRepository.save(l, receipt.getId()));
         return receipt;

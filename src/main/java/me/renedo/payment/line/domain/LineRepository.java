@@ -7,6 +7,8 @@ public interface LineRepository {
 
     Line save(Line line, UUID receipt);
 
+    boolean update(Line line);
+
     List<Line> findInReceipt(UUID receiptId);
 
     int delete(List<UUID> ids);

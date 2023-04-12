@@ -23,11 +23,21 @@ public class JooqReceiptRepository implements ReceiptRepository {
         this.context = context;
     }
 
-    @Override public Optional<Receipt> findById(UUID id) {
+    @Override
+    public Optional<Receipt> findById(UUID id) {
         return context.selectFrom(RECEIPT)
             .where(RECEIPT.ID.eq(id))
             .fetchOptional()
             .map(this::toReceipt);
+    }
+
+    @Override
+    public boolean update(Receipt receipt) {
+        return context.update(RECEIPT)
+            .set(RECEIPT.SITE, receipt.getSite())
+            .set(RECEIPT.TOTAL, new Money(receipt.getTotal()).getMoneyWithoutDecimals())
+            .where(RECEIPT.ID.eq(receipt.getId()))
+            .execute() > 0;
     }
 
     @Override

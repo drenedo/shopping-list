@@ -2,6 +2,7 @@ package me.renedo.payment.receipt.domain;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -100,5 +101,54 @@ public class Receipt {
 
     public Boolean getCash() {
         return cash;
+    }
+
+    public Receipt getReceiptWithCorrectLinesIfIsPossible(){
+        if(lines == null || lines.isEmpty() || total.doubleValue() == getTotalOfLines(lines)){
+            return this;
+        }
+        return new Receipt(id, list, text, total, site, findCorrectSum(), created, cash, lineNumber);
+    }
+
+    public List<Line> findCorrectSum() {
+        List<Line> finalLines = findCorrectSum(lines);
+        if(finalLines == null){
+            throw new NotAcceptableException("Lines not match with total");
+        }
+        return finalLines;
+    }
+
+    private List<Line> findCorrectSum(List<Line> lines) {
+        double totalOfLines = getTotalOfLines(lines);
+        double total = this.getTotal().doubleValue();
+        for(int i = 0; i < lines.size(); i++){
+            if(totalOfLines - lines.get(i).getTotal().doubleValue() == total){
+                return getPartialList(lines, i);
+            }
+        }
+        for(int i = 0; i < lines.size(); i++){
+            List<Line> partial = getPartialList(lines, i);
+            double sumPartial = getTotalOfLines(partial);
+            if(total == sumPartial){
+                return partial;
+            }
+            if(total <= getTotalOfLines(partial)) {
+                List<Line> newPartial = findCorrectSum(partial);
+                if(newPartial != null){
+                    return newPartial;
+                }
+            }
+        }
+        return null;
+    }
+
+    private List<Line> getPartialList(List<Line> lines, int index) {
+        List<Line> newLines = new ArrayList<>(lines);
+        newLines.remove(index);
+        return newLines;
+    }
+
+    private double getTotalOfLines(List<Line> lines){
+        return lines.stream().mapToDouble(l -> l.getTotal().doubleValue()).sum();
     }
 }
