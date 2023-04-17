@@ -56,7 +56,8 @@ public class ReceiptUpdater {
     }
 
     private void deleteLines(Receipt receipt, List<UUID> lines) {
-        List<UUID> toDelete = receipt.getLines().stream().map(Line::getId).filter(id -> !lines.contains(id)).toList();
+        List<UUID> ids = receipt.getLines().stream().map(Line::getId).toList();
+        List<UUID> toDelete = lines.stream().filter(id -> !ids.contains(id)).toList();
         lineRepository.delete(toDelete);
     }
 

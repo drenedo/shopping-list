@@ -20,9 +20,9 @@ import software.amazon.awssdk.services.textract.model.Block;
 import software.amazon.awssdk.services.textract.model.BoundingBox;
 import software.amazon.awssdk.services.textract.model.Geometry;
 
-class TextractServiceTest {
+class SpanishTextractServiceTest {
 
-    TextractService service = new TextractService();
+    SpanishTextractService service = new SpanishTextractService();
 
     @Test
     void get_text_from_lidl() throws URISyntaxException {
@@ -32,6 +32,16 @@ class TextractServiceTest {
         assertThat(read.getCash(), is(true));
         assertThat(read.getTotal().doubleValue(), is(5.4D));
         assertThat(read.getLines(), hasSize(2));
+    }
+
+    @Test
+    void get_text_from_lidl_two() throws URISyntaxException {
+        OcrRead read = service.read(givenAbsoluteRouteFromFile("tickets/ticket_lidl2.jpg"));
+
+        assertThat(read.getSite(), is("LiDL"));
+        assertThat(read.getCash(), is(true));
+        assertThat(read.getTotal().doubleValue(), is(2.76D));
+        assertThat(read.getLines(), hasSize(3));
     }
 
     @Test
@@ -61,6 +71,7 @@ class TextractServiceTest {
         assertThat(read.getSite(), is("FRUTAS HEREDERO"));
         assertThat(read.getCash(), is(true));
         assertThat(read.getTotal(), is(BigDecimal.valueOf(3.89)));
+        assertThat(read.getLines(), hasSize(3));
     }
 
     @Test

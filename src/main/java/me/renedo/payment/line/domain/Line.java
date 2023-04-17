@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import me.renedo.shared.date.ISOFormatter;
 import me.renedo.shared.exception.NotAcceptableException;
 
 public class Line {
@@ -67,9 +66,5 @@ public class Line {
 
     public LocalDateTime getCreated() {
         return created;
-    }
-
-    public String getStringCreated() {
-        return ISOFormatter.format(created);
     }
 }

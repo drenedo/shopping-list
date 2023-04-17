@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import me.renedo.InfrastructureTestCase;
 import me.renedo.payment.line.domain.Line;
+import me.renedo.payment.line.domain.LinePrice;
 import me.renedo.shared.uuid.UUIDValidator;
 
 class JooqLineRepositoryTest extends InfrastructureTestCase {
@@ -33,7 +34,7 @@ class JooqLineRepositoryTest extends InfrastructureTestCase {
         UUID uuid = UUID.randomUUID();
         UUID receipt = UUIDValidator.fromString("d14f860a-0d91-0529-9f91-ac9f5f27a45c");
 
-        jooqLineRepository.save(new Line(uuid, null, null, "some-name", new BigDecimal(10), 1, LocalDateTime.now()), receipt);
+        jooqLineRepository.save(new Line(uuid, null, null, "some-text", new BigDecimal(10), 1, LocalDateTime.now()), receipt);
 
         List<Line> inReceipt = jooqLineRepository.findInReceipt(receipt);
         assertThat(inReceipt, hasSize(1));
@@ -41,6 +42,13 @@ class JooqLineRepositoryTest extends InfrastructureTestCase {
         assertThat(saved, notNullValue());
         assertThat(saved.getId(), is(uuid));
         assertThat(saved.getReceipt(), is(receipt));
+    }
+
+    @Test
+    void search_lines(){
+        List<LinePrice> lines = jooqLineRepository.search("NAME");
+
+        assertThat(lines, hasSize(8));
     }
 
     @Test
@@ -52,10 +60,11 @@ class JooqLineRepositoryTest extends InfrastructureTestCase {
 
     @Test
     void delete_line(){
-        List<Line> linesInReceipt = jooqLineRepository.findInReceipt(RECEIPT);
+        UUID receiptIdToDelete = UUIDValidator.fromString("d14f860a-0d91-0529-9f91-ac9f5f27a45c");
+        List<Line> linesInReceipt = jooqLineRepository.findInReceipt(receiptIdToDelete);
 
         jooqLineRepository.delete(linesInReceipt.stream().map(Line::getId).toList());
 
-        assertThat(jooqLineRepository.findInReceipt(RECEIPT), hasSize(0));
+        assertThat(jooqLineRepository.findInReceipt(receiptIdToDelete), hasSize(0));
     }
 }

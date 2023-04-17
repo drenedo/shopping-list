@@ -33,11 +33,11 @@ import software.amazon.awssdk.services.textract.model.Document;
 import software.amazon.awssdk.services.textract.model.FeatureType;
 
 @Service
-public class TextractService implements OcrService {
+public class SpanishTextractService implements OcrService {
 
     private final TextractClient textractClient;
 
-    public TextractService() {
+    public SpanishTextractService() {
         textractClient = TextractClient.builder()
             .region(Region.EU_WEST_1)
             .credentialsProvider(ProfileCredentialsProvider.create())

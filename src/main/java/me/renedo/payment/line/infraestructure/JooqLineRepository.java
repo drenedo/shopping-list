@@ -1,14 +1,19 @@
 package me.renedo.payment.line.infraestructure;
 
 import static me.renedo.shopping.shared.jooq.tables.Line.LINE;
+import static me.renedo.shopping.shared.jooq.tables.Receipt.RECEIPT;
+import static org.jooq.impl.DSL.lower;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 import org.jooq.DSLContext;
+import org.jooq.Record5;
 import org.springframework.stereotype.Repository;
 
 import me.renedo.payment.line.domain.Line;
+import me.renedo.payment.line.domain.LinePrice;
 import me.renedo.payment.line.domain.LineRepository;
 import me.renedo.shared.money.Money;
 import me.renedo.shopping.shared.jooq.tables.records.LineRecord;
@@ -45,6 +50,22 @@ public class JooqLineRepository implements LineRepository {
             .where(LINE.RECEIPT.eq(receiptId))
             .fetch()
             .map(this::toLine);
+    }
+
+    @Override
+    public List<LinePrice> search(String text) {
+        //TODO this has a bad performance, if there are a lot of data we need to considere another option.
+        return context.select(LINE.ID, LINE.NAME, RECEIPT.SITE, LINE.TOTAL, LINE.CREATED)
+            .from(LINE)
+            .leftJoin(RECEIPT).on(RECEIPT.ID.eq(LINE.RECEIPT))
+            .where(lower(LINE.NAME).like("%"+text.toLowerCase()+"%"))
+            .orderBy(LINE.CREATED).limit(20)
+            .fetch()
+            .map(this::toLinePrice);
+    }
+
+    private LinePrice toLinePrice(Record5<UUID, String, String, Integer, LocalDateTime> record) {
+        return new LinePrice(record.value1(), record.value2(), record.value3(), new Money(record.value4()).getMoney(), record.value5());
     }
 
     @Override

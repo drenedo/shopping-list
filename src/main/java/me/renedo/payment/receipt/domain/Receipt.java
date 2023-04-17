@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.UUID;
 
 import me.renedo.payment.line.domain.Line;
-import me.renedo.shared.date.ISOFormatter;
 import me.renedo.shared.exception.NotAcceptableException;
 
 public class Receipt {
@@ -89,10 +88,6 @@ public class Receipt {
 
     public List<Line> getLines() {
         return lines;
-    }
-
-    public String getStringCreated() {
-        return ISOFormatter.format(created);
     }
 
     public Integer getLineNumber() {

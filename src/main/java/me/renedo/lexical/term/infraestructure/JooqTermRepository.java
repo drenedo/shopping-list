@@ -42,6 +42,7 @@ public class JooqTermRepository implements TermRepository {
 
     @Override
     public List<Term> search(String text, Type type) {
+        //TODO this has a bad performance, if there are a lot of data we need to considere another option.
         return context.selectFrom(TERM)
             .where(TERM.NAME.like(text+"%").and(TERM.TYPE.eq(String.valueOf(type.getId()))))
             .orderBy(TERM.TIMES.desc()).limit(10)

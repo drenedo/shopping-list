@@ -11,5 +11,7 @@ public interface LineRepository {
 
     List<Line> findInReceipt(UUID receiptId);
 
+    List<LinePrice> search(String text);
+
     int delete(List<UUID> ids);
 }
