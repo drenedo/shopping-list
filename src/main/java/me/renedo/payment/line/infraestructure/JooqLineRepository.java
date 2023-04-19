@@ -15,7 +15,8 @@ import org.springframework.stereotype.Repository;
 import me.renedo.payment.line.domain.Line;
 import me.renedo.payment.line.domain.LinePrice;
 import me.renedo.payment.line.domain.LineRepository;
-import me.renedo.shared.money.Money;
+import me.renedo.shared.number.Amount;
+import me.renedo.shared.number.Money;
 import me.renedo.shopping.shared.jooq.tables.records.LineRecord;
 
 @Repository
@@ -29,9 +30,11 @@ public class JooqLineRepository implements LineRepository {
     @Override
     public Line save(Line line, UUID receipt) {
         Money total = new Money(line.getTotal());
+        Amount amount = new Amount(line.getAmount());
         context.insertInto(LINE,
                 LINE.ID, LINE.RECEIPT, LINE.ITEM, LINE.AMOUNT, LINE.NAME, LINE.TOTAL, LINE.CREATED)
-            .values(line.getId(), receipt, line.getItem(), line.getAmount(), line.getName(), total.getMoneyWithoutDecimals(), line.getCreated())
+            .values(line.getId(), receipt, line.getItem(), amount.getAmountWithoutDecimals(), line.getName(), total.getMoneyWithoutDecimals(),
+                line.getCreated())
             .execute();
         return line;
     }
@@ -58,7 +61,7 @@ public class JooqLineRepository implements LineRepository {
         return context.select(LINE.ID, LINE.NAME, RECEIPT.SITE, LINE.TOTAL, LINE.CREATED)
             .from(LINE)
             .leftJoin(RECEIPT).on(RECEIPT.ID.eq(LINE.RECEIPT))
-            .where(lower(LINE.NAME).like("%"+text.toLowerCase()+"%"))
+            .where(lower(LINE.NAME).like("%" + text.toLowerCase() + "%"))
             .orderBy(LINE.CREATED).limit(20)
             .fetch()
             .map(this::toLinePrice);
@@ -76,7 +79,8 @@ public class JooqLineRepository implements LineRepository {
 
     private Line toLine(LineRecord record) {
         Money money = new Money(record.getTotal());
-        return new Line(record.getId(), record.getReceipt(), record.getItem(), record.getName(), money.getMoney(), record.getAmount(),
+        Amount amount = new Amount(record.getAmount());
+        return new Line(record.getId(), record.getReceipt(), record.getItem(), record.getName(), money.getMoney(), amount.getAmount(),
             record.getCreated());
     }
 }

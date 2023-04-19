@@ -43,7 +43,7 @@ class ReceiptRetrieverTest {
         LineRepository lineRepository = mock(LineRepository.class);
         ReceiptRetriever retriever = new ReceiptRetriever(repository, lineRepository);
         UUID uuid = UUID.randomUUID();
-        List<Line> lines = List.of(new Line(UUID.randomUUID(), null, null, "some-name", BigDecimal.valueOf(12.3D), 1, LocalDateTime.now()));
+        List<Line> lines = List.of(new Line(UUID.randomUUID(), null, null, "some-name", BigDecimal.valueOf(12.3D), 1D, LocalDateTime.now()));
         Receipt receipt = new Receipt(uuid, null, "some-text", BigDecimal.valueOf(12.3D), "some-site", lines, LocalDateTime.now(), true);
         when(repository.findById(uuid)).thenReturn(Optional.of(receipt));
         when(lineRepository.findInReceipt(uuid)).thenReturn(lines);

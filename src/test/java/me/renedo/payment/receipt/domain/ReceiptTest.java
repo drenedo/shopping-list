@@ -99,7 +99,7 @@ class ReceiptTest {
 
     private Receipt givenReceipt(double total, List<Double> lines) {
         return new Receipt(UUID.randomUUID(), UUID.randomUUID(), "some-text", BigDecimal.valueOf(total), "some-site",
-            lines.stream().map(d -> new Line(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "some-name", BigDecimal.valueOf(d), 1, null))
+            lines.stream().map(d -> new Line(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "some-name", BigDecimal.valueOf(d), 1D, null))
                 .toList(), null, null);
     }
 }

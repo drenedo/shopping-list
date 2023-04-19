@@ -126,7 +126,36 @@ class SpanishTextractServiceTest {
     }
 
     @Test
-    void test_ocr_lines(){
+    void test_ocr_lines_lidl() {
+        List<String> strLines = List.of("LiDL",
+        "LIDL SUPERMERCADOS S.A.U.",
+        "C/ Condesa Mencia s/n (G3)",
+        "09006Burgos",
+        "NIF A60195278",
+        "www.lidl.es",
+        "EUR",
+        "Banana",
+        "0,97 E",
+        "0,926 kg X 1,05 EUR/kg",
+        "Calabasin 1,13 E",
+        "0,838 kg X 1,35 EUR/kg",
+        "Floopy Bombon 0,33x ? 0,66 B");
+
+        List<OcrLine> lines = service.getOcrLines(strLines, BigDecimal.valueOf(200D));
+
+        assertThat(lines, hasSize(3));
+        assertThat(lines.get(0).getName(), is("Calabasin"));
+        assertThat(lines.get(0).getAmount(), is(0.838D));
+        assertThat(lines.get(0).getPrice().doubleValue(), is(1.35D));
+        assertThat(lines.get(0).getTotal().doubleValue(), is(1.13D));
+        assertThat(lines.get(2).getName(), is("Banana"));
+        assertThat(lines.get(2).getAmount(), is(0.926D));
+        assertThat(lines.get(2).getPrice().doubleValue(), is(1.05D));
+        assertThat(lines.get(2).getTotal().doubleValue(), is(0.97D));
+    }
+
+    @Test
+    void test_ocr_lines_mercadona(){
         List<String> strLines = List.of("MERCADONA,S.A",
         "A-46103834",
         "C/ JUAN RAMON JIMENEZ 5",
@@ -158,35 +187,40 @@ class SpanishTextractServiceTest {
 
         assertThat(lines, hasSize(13));
         assertThat(lines.get(0).getName(), is("TORTITAS DE MAIZ"));
-        assertThat(lines.get(0).getAmount(), is(2));
+        assertThat(lines.get(0).getAmount(), is(2.0D));
         assertThat(lines.get(0).getTotal().doubleValue(), is(2.2D));
         assertThat(lines.get(1).getName(), is("COPOS DE ESPELTA 0%"));
-        assertThat(lines.get(1).getAmount(), is(3));
+        assertThat(lines.get(1).getAmount(), is(3.0D));
         assertThat(lines.get(1).getTotal().doubleValue(), is(5.4D));
         assertThat(lines.get(2).getName(), is("PECHUGA CERTIFICADA"));
-        assertThat(lines.get(2).getAmount(), is(1));
+        assertThat(lines.get(2).getAmount(), is(1.0D));
         assertThat(lines.get(2).getTotal().doubleValue(), is(4.55D));
         assertThat(lines.get(3).getName(), is("JAMON C. CALIDAD EXTR"));
-        assertThat(lines.get(3).getAmount(), is(1));
+        assertThat(lines.get(3).getAmount(), is(1.0D));
         assertThat(lines.get(3).getTotal().doubleValue(), is(1.95D));
         assertThat(lines.get(4).getName(), is("TOMATE MALLA 2 KG."));
-        assertThat(lines.get(4).getAmount(), is(1));
+        assertThat(lines.get(4).getAmount(), is(1.0D));
         assertThat(lines.get(5).getName(), is("SEPIA LIMPIA"));
-        assertThat(lines.get(5).getAmount(), is(1));
+        assertThat(lines.get(5).getAmount(), is(1.0D));
         assertThat(lines.get(6).getName(), is("FRESÓN 1 KG."));
-        assertThat(lines.get(6).getAmount(), is(1));
+        assertThat(lines.get(6).getAmount(), is(1.0D));
         assertThat(lines.get(7).getName(), is("QUESO TIERNO"));
-        assertThat(lines.get(7).getAmount(), is(1));
+        assertThat(lines.get(7).getAmount(), is(1.0D));
         assertThat(lines.get(8).getName(), is("MANGO"));
-        assertThat(lines.get(8).getAmount(), is(1));
+        assertThat(lines.get(8).getAmount(), is(0.686D));
+        assertThat(lines.get(8).getPrice().doubleValue(), is(2.70D));
         assertThat(lines.get(9).getName(), is("BERENJENA"));
-        assertThat(lines.get(9).getAmount(), is(1));
+        assertThat(lines.get(9).getAmount(), is(0.416D));
+        assertThat(lines.get(9).getPrice().doubleValue(), is(2.29D));
         assertThat(lines.get(10).getName(), is("PIMIENTO ROJO"));
-        assertThat(lines.get(10).getAmount(), is(1));
+        assertThat(lines.get(10).getAmount(), is(0.784D));
+        assertThat(lines.get(10).getPrice().doubleValue(), is(2.99D));
         assertThat(lines.get(11).getName(), is("PIMIENTO FREIR"));
-        assertThat(lines.get(11).getAmount(), is(1));
+        assertThat(lines.get(11).getAmount(), is(0.062D));
+        assertThat(lines.get(11).getPrice().doubleValue(), is(2.49D));
         assertThat(lines.get(12).getName(), is("PEPINO"));
-        assertThat(lines.get(12).getAmount(), is(1));
+        assertThat(lines.get(12).getAmount(), is(0.156D));
+        assertThat(lines.get(12).getPrice().doubleValue(), is(1.79D));
     }
 
     private Block givenBlock(String text, float width, float height, float left, float top) {

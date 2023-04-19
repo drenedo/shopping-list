@@ -89,17 +89,16 @@ public class SpanishTextractService implements OcrService {
     }
 
     protected List<OcrLine> getOcrLines(List<String> lines, BigDecimal total) {
-        //TODO review previous line
         List<OcrLine> complexLines = lines.stream()
             .filter(b -> b.split(" ").length > 2 && b.matches(".*\\d?\\d?[\\.,/]\\d\\d?.?.?") &&
                 Arrays.stream(b.split(" ")).filter(w -> w.matches("\\d?\\d?[\\.,/]\\d\\d?")).count() <= 2)
             .filter(l -> total != null && ofNullable(getAmountOfLine(l)).map(a -> a.compareTo(total) < 0).orElse(false))
-            .map(l -> toOcrLineWithPrevious(getPreviousLine(lines, l), l))
+            .map(l -> toOcrLineWithPrevious(lines, l))
             .toList();
         List<OcrLine> simpleLines = lines.stream()
             .filter(b -> b.matches("\\d?\\d?[\\.,/]\\d\\d?.?.?") &&
                 ofNullable(getAmountOfLine(b)).map(a -> a.compareTo(total) < 0).orElse(false))
-            .map(b -> toOcrLine(getPreviousLine(lines, b), b))
+            .map(b -> toOcrLine(lines, b))
             .toList();
         return Stream.concat(complexLines.stream(), simpleLines.stream()).toList();
     }
@@ -184,26 +183,87 @@ public class SpanishTextractService implements OcrService {
             || upperLine.matches(".{0,5}?EFECTIVO.*") || upperLine.matches(".{0,5}?CONTADO,*");
     }
 
-    private OcrLine toOcrLine(Optional<String> previousLine, String b) {
-        return new OcrLine(previousLine.orElse(null), null, null, getAmountOfLine(b),
-            previousLine.orElse("") + " " + b);
+    private OcrLine toOcrLine(List<String> lines, String line) {
+        Optional<String> previousLine = getPreviousLine(lines, line);
+        Optional<String> nextLine = getNextLine(lines, line);
+        String name = previousLine.orElse(null);
+        BigDecimal total = getAmountOfLine(line);
+        return nextLine.map(l -> getLineWithKg(l, total, name)
+            .orElseGet(() -> getOcrLine(line, previousLine, name, total)))
+            .orElseGet(() -> getOcrLine(line, previousLine, name, total));
     }
 
-    private OcrLine toOcrLineWithPrevious(Optional<String> previousLine, String line) {
-        BigDecimal amount = getAmountOfLine(line);
+    private static OcrLine getOcrLine(String line, Optional<String> previousLine, String name, BigDecimal total) {
+        return new OcrLine(name, null, null, total, previousLine.orElse("") + " " + line);
+    }
+
+    private OcrLine toOcrLineWithPrevious(List<String> lines, String line) {
+        Optional<String> previousLine = getPreviousLine(lines, line);
+        Optional<String> nextLine = getNextLine(lines, line);
+        BigDecimal total = getAmountOfLine(line);
         String name = getName(line);
         boolean isCorrectName = name.matches(".*\\D{4}.*");
         String preName = isCorrectName ? name : previousLine.orElse(name);
-        Integer number = isCorrectName ? getNumberOfItems(line) : previousLine.map(this::getNumberOfItems).orElseGet(() -> getNumberOfItems(line));
-        String strNumber = String.valueOf(number);
+        Double number = isCorrectName ? getNumberOfItems(line) : previousLine.map(this::getNumberOfItems).orElseGet(() -> getNumberOfItems(line));
+        String strNumber = String.valueOf(number != null ? number.intValue() : null);
         String finalName =
             preName.startsWith(strNumber) && preName.length() > strNumber.length() ? preName.substring(strNumber.length() + 1) : preName;
-        return new OcrLine(finalName, number, null, amount, line);
+        return getLineWithKg(previousLine.orElse(line), total, finalName)
+            .orElseGet(() -> nextLine.flatMap(s -> getLineWithKg(s, total, finalName))
+                .orElseGet(() -> getLineWithKg(line, total, finalName).orElseGet(() -> new OcrLine(finalName, number, null, total, line))));
     }
 
-    private Integer getNumberOfItems(String line) {
+    private Optional<OcrLine> getLineWithKg(String line, BigDecimal total, String finalName) {
+        if (hasKg(line)) {
+            Double kgsAmount = getAmountByKg(line, total);
+            BigDecimal price = getPriceByKg(line, total);
+            if (price != null && kgsAmount != null && price.multiply(BigDecimal.valueOf(kgsAmount)).setScale(2, RoundingMode.HALF_UP).equals(total)) {
+                return Optional.of(new OcrLine(finalName, kgsAmount, price, total, finalName + " " + total + " " + line));
+            }
+        }
+        return Optional.empty();
+    }
+
+    private boolean hasKg(String line) {
+        String lower = line.toLowerCase();
+        return lower.contains(" kg ") || lower.contains("/kg");
+    }
+
+    private Double getAmountByKg(String line, BigDecimal price) {
+        String[] kgs = line.split("kg");
+        for (String kg : kgs) {
+            Double value = getDoubleFromString(kg);
+            if (value != null && !value.equals(price.doubleValue())) {
+                return value;
+            }
+        }
+        return null;
+    }
+
+    private BigDecimal getPriceByKg(String line, BigDecimal price) {
+        String[] kgs = line.split("kg");
+        for (int i = kgs.length - 1; i >= 0; i--) {
+            Double value = getDoubleFromString(kgs[i]);
+            if (value != null && !value.equals(price.doubleValue())) {
+                return BigDecimal.valueOf(value);
+            }
+        }
+        return null;
+    }
+
+    private static Double getDoubleFromString(String kg) {
+        try {
+            String valueWithDot = kg.replaceAll(",", ".");
+            String cleanString = valueWithDot.replaceAll("[^\\d\\.]", "");
+            return Double.valueOf(cleanString);
+        } catch (NumberFormatException nfe) {
+            return null;
+        }
+    }
+
+    private Double getNumberOfItems(String line) {
         String[] words = line.split(" ");
-        return words.length > 0 && words[0].matches("\\d\\d?") ? Integer.valueOf(words[0]) : null;
+        return words.length > 0 && words[0].matches("\\d\\d?") ? Double.valueOf(words[0]) : null;
     }
 
     private String getName(String line) {

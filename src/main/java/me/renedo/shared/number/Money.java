@@ -1,4 +1,4 @@
-package me.renedo.shared.money;
+package me.renedo.shared.number;
 
 import java.math.BigDecimal;
 

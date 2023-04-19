@@ -10,13 +10,13 @@ import me.renedo.payment.line.domain.Line;
 
 public class OcrLine {
     private final String name;
-    private final Integer amount;
+    private final Double amount;
     private final BigDecimal price;
     private final BigDecimal total;
 
     private final String text;
 
-    public OcrLine(String name, Integer amount, BigDecimal price, BigDecimal total, String text) {
+    public OcrLine(String name, Double amount, BigDecimal price, BigDecimal total, String text) {
         this.name = name;
         this.amount = amount;
         this.price = price;
@@ -28,7 +28,7 @@ public class OcrLine {
         return name;
     }
 
-    public Integer getAmount() {
+    public Double getAmount() {
         return amount;
     }
 

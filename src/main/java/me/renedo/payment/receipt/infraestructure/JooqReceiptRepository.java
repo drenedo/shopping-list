@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import me.renedo.payment.receipt.domain.Receipt;
 import me.renedo.payment.receipt.domain.ReceiptRepository;
-import me.renedo.shared.money.Money;
+import me.renedo.shared.number.Money;
 import me.renedo.shopping.shared.jooq.tables.records.ReceiptRecord;
 
 @Repository

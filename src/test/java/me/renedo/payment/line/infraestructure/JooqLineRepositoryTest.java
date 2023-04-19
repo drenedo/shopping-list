@@ -34,7 +34,7 @@ class JooqLineRepositoryTest extends InfrastructureTestCase {
         UUID uuid = UUID.randomUUID();
         UUID receipt = UUIDValidator.fromString("d14f860a-0d91-0529-9f91-ac9f5f27a45c");
 
-        jooqLineRepository.save(new Line(uuid, null, null, "some-text", new BigDecimal(10), 1, LocalDateTime.now()), receipt);
+        jooqLineRepository.save(new Line(uuid, null, null, "some-text", new BigDecimal(10), 1D, LocalDateTime.now()), receipt);
 
         List<Line> inReceipt = jooqLineRepository.findInReceipt(receipt);
         assertThat(inReceipt, hasSize(1));

@@ -17,11 +17,11 @@ public class Line {
 
     private final BigDecimal total;
 
-    private final Integer amount;
+    private final Double amount;
 
     private final LocalDateTime created;
 
-    public Line(UUID id, UUID receipt, UUID item, String name, BigDecimal total, Integer amount, LocalDateTime updated) {
+    public Line(UUID id, UUID receipt, UUID item, String name, BigDecimal total, Double amount, LocalDateTime updated) {
         if(id == null){
             throw new NotAcceptableException("Id is mandatory");
         }
@@ -56,7 +56,7 @@ public class Line {
         return total;
     }
 
-    public Integer getAmount() {
+    public Double getAmount() {
         return amount;
     }
 

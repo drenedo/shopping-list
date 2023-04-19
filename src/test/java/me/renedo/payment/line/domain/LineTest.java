@@ -13,7 +13,7 @@ class LineTest {
 
     @Test
     public void new_line_all_ok() {
-        Line line = new Line(UUID.randomUUID(), null, null, "some-name", new BigDecimal(10), 1, null);
+        Line line = new Line(UUID.randomUUID(), null, null, "some-name", new BigDecimal(10), 1D, null);
 
         assertThat(line.getName(), is("some-name"));
         assertThat(line.getTotal(), is(new BigDecimal(10)));

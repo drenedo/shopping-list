@@ -62,7 +62,7 @@ class ReceiptEraserTest {
     }
 
     private Line givenLine(String id) {
-        return new Line(UUID.fromString(id), null, null, "some-name", BigDecimal.ONE, 1, null);
+        return new Line(UUID.fromString(id), null, null, "some-name", BigDecimal.ONE, 1D, null);
     }
 
 
