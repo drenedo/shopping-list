@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import me.renedo.payment.line.domain.Line;
 import me.renedo.payment.line.domain.LineRepository;
+import me.renedo.payment.receipt.domain.Category;
 import me.renedo.payment.receipt.domain.Receipt;
 import me.renedo.payment.receipt.domain.ReceiptRepository;
 import me.renedo.shared.Service;
@@ -32,10 +33,12 @@ public class ReceiptUpdater {
         createNewLines(receipt, lines);
     }
 
-    public record UpdateReceiptRequest(UUID id, BigDecimal total, String site, String text, List<UpdateLineRequest> lines) {
+    public record UpdateReceiptRequest(UUID id, BigDecimal total, String site, String text, List<UpdateLineRequest> lines, Boolean cash,
+                                       String category) {
         public Receipt toReceipt() {
             var totalVerified = lines.isEmpty() ? total : lines.stream().map(UpdateLineRequest::total).reduce(BigDecimal.ZERO, BigDecimal::add);
-            return new Receipt(id, null, text, totalVerified, site, lines.stream().map(UpdateLineRequest::toLine).toList(), null, null);
+            return new Receipt(id, null, text, totalVerified, site, lines.stream().map(UpdateLineRequest::toLine).toList(), null, cash,
+                Category.valueOfId(category));
         }
     }
 

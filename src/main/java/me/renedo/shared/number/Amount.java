@@ -8,8 +8,8 @@ public class Amount {
         this.amount = amount;
     }
 
-    public Amount(int intAMount){
-        this.amount = (double) intAMount / 1000D;
+    public Amount(Integer intAMount){
+        this.amount = intAMount != null ? (double) intAMount / 1000D : null;
     }
 
     public Double getAmount() {

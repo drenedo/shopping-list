@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import me.renedo.payment.receipt.domain.Category;
 import me.renedo.payment.receipt.domain.Receipt;
 
 public class OcrRead {
@@ -55,8 +56,8 @@ public class OcrRead {
         return text;
     }
 
-    public Receipt toReceipt(UUID id, UUID list) {
+    public Receipt toReceipt(UUID id, UUID list, Category category) {
         return new Receipt(id, list, text, total, site.toUpperCase(), lines.stream().map(OcrLine::toLine).collect(Collectors.toList()),
-            LocalDateTime.now(), cash);
+            LocalDateTime.now(), cash, category);
     }
 }

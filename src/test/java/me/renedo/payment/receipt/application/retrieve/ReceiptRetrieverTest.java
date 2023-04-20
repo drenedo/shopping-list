@@ -44,7 +44,7 @@ class ReceiptRetrieverTest {
         ReceiptRetriever retriever = new ReceiptRetriever(repository, lineRepository);
         UUID uuid = UUID.randomUUID();
         List<Line> lines = List.of(new Line(UUID.randomUUID(), null, null, "some-name", BigDecimal.valueOf(12.3D), 1D, LocalDateTime.now()));
-        Receipt receipt = new Receipt(uuid, null, "some-text", BigDecimal.valueOf(12.3D), "some-site", lines, LocalDateTime.now(), true);
+        Receipt receipt = new Receipt(uuid, null, "some-text", BigDecimal.valueOf(12.3D), "some-site", lines, LocalDateTime.now(), true, null);
         when(repository.findById(uuid)).thenReturn(Optional.of(receipt));
         when(lineRepository.findInReceipt(uuid)).thenReturn(lines);
 
@@ -63,7 +63,8 @@ class ReceiptRetrieverTest {
         ReceiptRetriever retriever = new ReceiptRetriever(repository, lineRepository);
         when(repository.findAllBetweenDates(any(LocalDateTime.class), any(LocalDateTime.class))).
             thenReturn(
-                List.of(new Receipt(UUID.randomUUID(), null, "some-text", BigDecimal.valueOf(12.3D), "some-site", null, LocalDateTime.now(), true)));
+                List.of(new Receipt(UUID.randomUUID(), null, "some-text", BigDecimal.valueOf(12.3D), "some-site", null,
+                    LocalDateTime.now(), true,null)));
 
         double totalOfMonth = retriever.retrieveSumOfCurrentMonth(ZoneId.of("Europe/Madrid"));
 

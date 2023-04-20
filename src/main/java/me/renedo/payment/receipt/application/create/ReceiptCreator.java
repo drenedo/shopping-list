@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 import me.renedo.payment.line.domain.LineRepository;
+import me.renedo.payment.receipt.domain.Category;
 import me.renedo.payment.receipt.domain.Receipt;
 import me.renedo.payment.receipt.domain.ReceiptRepository;
 import me.renedo.payment.receipt.domain.ocr.OcrRead;
@@ -27,15 +28,16 @@ public class ReceiptCreator {
 
     public Receipt create(CreateReceiptRequest request){
         OcrRead read = ocrService.read(request.path());
-        Receipt receipt = read.toReceipt(request.id(), request.list());
+        Receipt receipt = read.toReceipt(request.id(), request.list(), null);
         repository.save(receipt.getReceiptWithCorrectLinesIfIsPossible());
         //FIXME only one insert not n
         receipt.getLines().forEach(l -> lineRepository.save(l, receipt.getId()));
         return receipt;
     }
 
-    public Receipt create(UUID id, String site, Double amount){
-        Receipt receipt = new Receipt(id, null, site, BigDecimal.valueOf(amount), site.toUpperCase(), null, null, null);
+    public Receipt create(UUID id, String site, Double amount, Boolean cash, String category){
+        Receipt receipt = new Receipt(id, null, site, BigDecimal.valueOf(amount), site.toUpperCase(), null, null, cash,
+            Category.valueOfId(category));
         repository.save(receipt);
         return receipt;
     }

@@ -19,7 +19,7 @@ class ReceiptTest {
 
     @Test
     public void new_receipt_all_ok() {
-        Receipt receipt = new Receipt(UUID.randomUUID(), null, "some-text", new BigDecimal(10), "some-site", null, LocalDateTime.now(), true);
+        Receipt receipt = new Receipt(UUID.randomUUID(), null, "some-text", new BigDecimal(10), "some-site", null, LocalDateTime.now(), true, null);
 
         assertThat(receipt.getText(), is("some-text"));
         assertThat(receipt.getSite(), is("some-site"));
@@ -29,25 +29,25 @@ class ReceiptTest {
     @Test
     public void id_is_null() {
         assertThrows(NotAcceptableException.class,
-            () -> new Receipt(null, null, "some-text", new BigDecimal(10), "some-site", null, LocalDateTime.now(), true));
+            () -> new Receipt(null, null, "some-text", new BigDecimal(10), "some-site", null, LocalDateTime.now(), true, null));
     }
 
     @Test
     public void text_is_null() {
         assertThrows(NotAcceptableException.class,
-            () -> new Receipt(UUID.randomUUID(), null, null, new BigDecimal(10), "some-site", null, LocalDateTime.now(), true));
+            () -> new Receipt(UUID.randomUUID(), null, null, new BigDecimal(10), "some-site", null, LocalDateTime.now(), true, null));
     }
 
     @Test
     public void total_is_null() {
         assertThrows(NotAcceptableException.class,
-            () -> new Receipt(UUID.randomUUID(), null, "some-text", null, "some-site", null, LocalDateTime.now(), true));
+            () -> new Receipt(UUID.randomUUID(), null, "some-text", null, "some-site", null, LocalDateTime.now(), true, null));
     }
 
     @Test
     public void site_is_null() {
         assertThrows(NotAcceptableException.class,
-            () -> new Receipt(UUID.randomUUID(), null, "some-text", new BigDecimal(10), null, null, LocalDateTime.now(), true));
+            () -> new Receipt(UUID.randomUUID(), null, "some-text", new BigDecimal(10), null, null, LocalDateTime.now(), true, null));
     }
 
     @Test
@@ -100,6 +100,6 @@ class ReceiptTest {
     private Receipt givenReceipt(double total, List<Double> lines) {
         return new Receipt(UUID.randomUUID(), UUID.randomUUID(), "some-text", BigDecimal.valueOf(total), "some-site",
             lines.stream().map(d -> new Line(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "some-name", BigDecimal.valueOf(d), 1D, null))
-                .toList(), null, null);
+                .toList(), null, null, null);
     }
 }

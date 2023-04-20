@@ -44,7 +44,8 @@ CREATE TABLE IF NOT EXISTS receipt
     total       int NOT NULL,
     cash        boolean,
     created     timestamp NOT NULL,
-    line_number int
+    line_number int,
+    category      char(1)
 );
 
 CREATE TABLE IF NOT EXISTS line

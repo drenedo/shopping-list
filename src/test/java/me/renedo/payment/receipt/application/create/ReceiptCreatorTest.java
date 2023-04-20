@@ -29,7 +29,7 @@ class ReceiptCreatorTest {
         ReceiptCreator creator = new ReceiptCreator(ocrService, repository, lineRepository);
         UUID id = UUID.randomUUID();
 
-        creator.create(id, "some-site", 45.2D);
+        creator.create(id, "some-site", 45.2D, null, null);
 
         verify(repository, atLeastOnce()).save(any(Receipt.class));
     }

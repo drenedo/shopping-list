@@ -45,9 +45,9 @@ public class ReceiptPutController extends V1Controller {
     }
 
     @PutMapping("/receipt/simple/{id}")
-    public ResponseEntity<ReceiptDetailResponse> createItem(@PathVariable String id, @RequestBody SimpleReceipt receipt) {
+    public ResponseEntity<ReceiptDetailResponse> createItem(@PathVariable String id, @RequestBody SimpleReceiptRequest receipt) {
         return ResponseEntity.created(URI.create(id))
-            .body(new ReceiptDetailResponse(receiptCreator.create(UUIDValidator.fromString(id), receipt.site, receipt.total())));
+            .body(new ReceiptDetailResponse(receiptCreator.create(UUIDValidator.fromString(id), receipt.site, receipt.total(), receipt.cash, receipt.category)));
     }
 
     private static void deleteImageFile(File file){
@@ -87,7 +87,7 @@ public class ReceiptPutController extends V1Controller {
         }
     }
 
-    record SimpleReceipt(String site, Double total) {
+    record SimpleReceiptRequest(String site, Double total, Boolean cash, String category) {
 
     }
 }

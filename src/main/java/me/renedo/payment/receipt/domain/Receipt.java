@@ -28,17 +28,20 @@ public class Receipt {
 
     private final Integer lineNumber;
 
+    private final Category category;
+
     public Receipt(Receipt receipt, List<Line> lines) {
         this(receipt.getId(), receipt.getList(), receipt.getText(), receipt.getTotal(), receipt.getSite(), lines, receipt.getCreated(),
-            receipt.getCash(), lines.size());
-    }
-
-    public Receipt(UUID id, UUID list, String text, BigDecimal total, String site, List<Line> lines, LocalDateTime created, Boolean cash) {
-        this(id, list, text, total, site, lines, created, cash, null);
+            receipt.getCash(), lines.size(), receipt.getCategory());
     }
 
     public Receipt(UUID id, UUID list, String text, BigDecimal total, String site, List<Line> lines, LocalDateTime created, Boolean cash,
-        Integer lineNumber) {
+        Category category) {
+        this(id, list, text, total, site, lines, created, cash, null, category);
+    }
+
+    public Receipt(UUID id, UUID list, String text, BigDecimal total, String site, List<Line> lines, LocalDateTime created, Boolean cash,
+        Integer lineNumber, Category category) {
         if (id == null) {
             throw new NotAcceptableException("Id is mandatory");
         }
@@ -60,6 +63,7 @@ public class Receipt {
         this.created = created == null ? LocalDateTime.now() : created;
         this.cash = cash;
         this.lineNumber = lineNumber != null ? lineNumber : (lines == null ? null : lines.size());
+        this.category = category;
     }
 
     public UUID getId() {
@@ -98,16 +102,20 @@ public class Receipt {
         return cash;
     }
 
-    public Receipt getReceiptWithCorrectLinesIfIsPossible(){
-        if(lines == null || lines.isEmpty() || total.doubleValue() == getTotalOfLines(lines)){
+    public Category getCategory() {
+        return category;
+    }
+
+    public Receipt getReceiptWithCorrectLinesIfIsPossible() {
+        if (lines == null || lines.isEmpty() || total.doubleValue() == getTotalOfLines(lines)) {
             return this;
         }
-        return new Receipt(id, list, text, total, site, findCorrectSum(), created, cash, lineNumber);
+        return new Receipt(id, list, text, total, site, findCorrectSum(), created, cash, lineNumber, category);
     }
 
     public List<Line> findCorrectSum() {
         List<Line> finalLines = findCorrectSum(lines);
-        if(finalLines == null){
+        if (finalLines == null) {
             throw new NotAcceptableException("Lines not match with total");
         }
         return finalLines;
@@ -116,20 +124,21 @@ public class Receipt {
     private List<Line> findCorrectSum(List<Line> lines) {
         double totalOfLines = getTotalOfLines(lines);
         double total = this.getTotal().doubleValue();
-        for(int i = 0; i < lines.size(); i++){
-            if(totalOfLines - lines.get(i).getTotal().doubleValue() == total){
+
+        for (int i = 0; i < lines.size(); i++) {
+            if (totalOfLines - lines.get(i).getTotal().doubleValue() == total) {
                 return getPartialList(lines, i);
             }
         }
-        for(int i = 0; i < lines.size(); i++){
+        for (int i = 0; i < lines.size(); i++) {
             List<Line> partial = getPartialList(lines, i);
             double sumPartial = getTotalOfLines(partial);
-            if(total == sumPartial){
+            if (total == sumPartial) {
                 return partial;
             }
-            if(total <= getTotalOfLines(partial)) {
+            if (total <= getTotalOfLines(partial)) {
                 List<Line> newPartial = findCorrectSum(partial);
-                if(newPartial != null){
+                if (newPartial != null) {
                     return newPartial;
                 }
             }
@@ -143,7 +152,7 @@ public class Receipt {
         return newLines;
     }
 
-    private double getTotalOfLines(List<Line> lines){
-        return lines.stream().mapToDouble(l -> l.getTotal().doubleValue()).sum();
+    private double getTotalOfLines(List<Line> lines) {
+        return lines.stream().map(Line::getTotal).reduce(BigDecimal.ZERO, BigDecimal::add).doubleValue();
     }
 }

@@ -1,5 +1,7 @@
 package me.renedo.shopping.status.domain;
 
+import java.util.Arrays;
+
 public enum Status {
     ACTIVE('A'), CANCELED('C'), INACTIVE('I');
 
@@ -14,10 +16,8 @@ public enum Status {
     }
 
     public static Status valueOfId(String value){
-        return switch (value){
-            case "A", "ACTIVE" -> ACTIVE;
-            case "C", "CANCELED" -> CANCELED;
-            default -> INACTIVE;
-        };
+        return Arrays.stream(Status.values())
+            .filter(c -> value.charAt(0) == c.getId() || c.toString().equals(value))
+            .findFirst().orElse(INACTIVE);
     }
 }

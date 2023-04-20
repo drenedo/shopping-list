@@ -1,5 +1,7 @@
 package me.renedo.lexical.type.domain;
 
+import java.util.Arrays;
+
 public enum Type {
     PRODUCT('P'), BRAND('B'), UNIT('U');
 
@@ -14,10 +16,8 @@ public enum Type {
     }
 
     public static Type valueOfId(String value){
-        return switch (value){
-            case "P", "PRODUCT" -> PRODUCT;
-            case "B", "BRAND" -> BRAND;
-            default -> UNIT;
-        };
+        return Arrays.stream(Type.values())
+            .filter(c -> value.charAt(0) == c.getId() || c.toString().equals(value))
+            .findFirst().orElse(UNIT);
     }
 }

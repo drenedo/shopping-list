@@ -1,5 +1,6 @@
 package me.renedo.payment.receipt.infraestructure;
 
+import static me.renedo.payment.receipt.domain.Category.HOUSE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -28,10 +29,12 @@ class JooqReceiptRepositoryTest extends InfrastructureTestCase {
         UUID uuid = UUID.randomUUID();
 
         Receipt saved =
-            jooqReceiptRepository.save(new Receipt(uuid, null, "some-text", new BigDecimal(10), "some-site", null, LocalDateTime.now(), true));
+            jooqReceiptRepository.save(
+                new Receipt(uuid, null, "some-text", new BigDecimal(10), "some-site", null, LocalDateTime.now(), true, HOUSE));
 
         assertThat(saved, notNullValue());
         assertThat(saved.getId(), is(uuid));
+        assertThat(saved.getCategory(), is(HOUSE));
     }
 
     @Test
@@ -63,7 +66,8 @@ class JooqReceiptRepositoryTest extends InfrastructureTestCase {
 
     @Test
     void find_between_dates() {
-        List<Receipt> receipts = jooqReceiptRepository.findAllBetweenDates(LocalDateTime.of(2023, 2, 16, 0, 0), LocalDateTime.of(2023, 2, 16, 23, 59));
+        List<Receipt> receipts =
+            jooqReceiptRepository.findAllBetweenDates(LocalDateTime.of(2023, 2, 16, 0, 0), LocalDateTime.of(2023, 2, 16, 23, 59));
 
         assertThat(receipts.size(), is(4));
     }

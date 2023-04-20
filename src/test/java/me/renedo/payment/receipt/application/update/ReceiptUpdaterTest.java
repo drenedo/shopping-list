@@ -74,10 +74,10 @@ class ReceiptUpdaterTest {
 
     private static UpdateReceiptRequest givenUpdateRequest() {
         return new UpdateReceiptRequest(UUID.randomUUID(), BigDecimal.TEN, "some-site", "some-text",
-            List.of(new UpdateLineRequest(UUID.randomUUID(), BigDecimal.TEN, "some-line-name")));
+            List.of(new UpdateLineRequest(UUID.randomUUID(), BigDecimal.TEN, "some-line-name")), true, "FOOD");
     }
 
     private static UpdateReceiptRequest givenUpdateRequest(List<UpdateLineRequest> lines) {
-        return new UpdateReceiptRequest(UUID.randomUUID(), BigDecimal.TEN, "some-site", "some-text", lines);
+        return new UpdateReceiptRequest(UUID.randomUUID(), BigDecimal.TEN, "some-site", "some-text", lines, true, "FOOD");
     }
 }
