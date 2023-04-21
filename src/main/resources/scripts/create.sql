@@ -59,6 +59,13 @@ CREATE TABLE IF NOT EXISTS line
     created     timestamp NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS classifier
+(
+    id          uuid PRIMARY KEY,
+    text        text NOT NULL,
+    category    char(1) NOT NULL
+);
+
 
 --TODO h2 not support index on clob
 --CREATE INDEX term_name_type ON term (name, type);

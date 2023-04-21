@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import me.renedo.payment.line.domain.Line;
 import me.renedo.payment.line.domain.LineRepository;
+import me.renedo.payment.receipt.application.create.ClassifierCreator;
 import me.renedo.payment.receipt.domain.Category;
 import me.renedo.payment.receipt.domain.Receipt;
 import me.renedo.payment.receipt.domain.ReceiptRepository;
@@ -19,13 +20,17 @@ public class ReceiptUpdater {
 
     private final LineRepository lineRepository;
 
-    public ReceiptUpdater(ReceiptRepository receiptRepository, LineRepository lineRepository) {
+    private final ClassifierCreator classifierCreator;
+
+    public ReceiptUpdater(ReceiptRepository receiptRepository, LineRepository lineRepository, ClassifierCreator classifierCreator) {
         this.receiptRepository = receiptRepository;
         this.lineRepository = lineRepository;
+        this.classifierCreator = classifierCreator;
     }
 
     public void update(UpdateReceiptRequest request) {
         Receipt receipt = request.toReceipt();
+        classifierCreator.saveClassifierIfIsPossible(receipt.getSite(), receipt.getCategory());
         updateReceipt(receipt.getReceiptWithCorrectLinesIfIsPossible());
         List<UUID> lines = lineRepository.findInReceipt(receipt.getId()).stream().map(Line::getId).toList();
         deleteLines(receipt, lines);

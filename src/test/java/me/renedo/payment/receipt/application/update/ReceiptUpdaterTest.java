@@ -15,8 +15,10 @@ import org.junit.jupiter.api.Test;
 
 import me.renedo.payment.line.domain.Line;
 import me.renedo.payment.line.domain.LineRepository;
+import me.renedo.payment.receipt.application.create.ClassifierCreator;
 import me.renedo.payment.receipt.application.update.ReceiptUpdater.UpdateLineRequest;
 import me.renedo.payment.receipt.application.update.ReceiptUpdater.UpdateReceiptRequest;
+import me.renedo.payment.receipt.domain.Classifier;
 import me.renedo.payment.receipt.domain.Receipt;
 import me.renedo.payment.receipt.domain.ReceiptRepository;
 import me.renedo.shared.exception.NotFoundException;
@@ -27,20 +29,23 @@ class ReceiptUpdaterTest {
     public void update_simple_receipt() {
         ReceiptRepository repository = mock(ReceiptRepository.class);
         LineRepository lineRepository = mock(LineRepository.class);
-        ReceiptUpdater updater = new ReceiptUpdater(repository, lineRepository);
+        ClassifierCreator classifierCreator = mock(ClassifierCreator.class);
+        ReceiptUpdater updater = new ReceiptUpdater(repository, lineRepository, classifierCreator);
         UpdateReceiptRequest receipt = givenUpdateRequest();
         when(repository.update(any(Receipt.class))).thenReturn(true);
 
         updater.update(receipt);
 
         verify(lineRepository, atMostOnce()).update(receipt.toReceipt().getLines().get(0));
+        verify(classifierCreator, atMostOnce()).create(any(Classifier.class));
     }
 
     @Test
     public void update_receipt_does_not_exist() {
         ReceiptRepository repository = mock(ReceiptRepository.class);
         LineRepository lineRepository = mock(LineRepository.class);
-        ReceiptUpdater updater = new ReceiptUpdater(repository, lineRepository);
+        ClassifierCreator classifierCreator = mock(ClassifierCreator.class);
+        ReceiptUpdater updater = new ReceiptUpdater(repository, lineRepository, classifierCreator);
         UpdateReceiptRequest receipt = givenUpdateRequest();
         when(repository.update(receipt.toReceipt())).thenReturn(false);
 
@@ -52,7 +57,8 @@ class ReceiptUpdaterTest {
     public void update_complex_receipt() {
         ReceiptRepository repository = mock(ReceiptRepository.class);
         LineRepository lineRepository = mock(LineRepository.class);
-        ReceiptUpdater updater = new ReceiptUpdater(repository, lineRepository);
+        ClassifierCreator classifierCreator = mock(ClassifierCreator.class);
+        ReceiptUpdater updater = new ReceiptUpdater(repository, lineRepository, classifierCreator);
         UpdateLineRequest presentLine = new UpdateLineRequest(UUID.randomUUID(), BigDecimal.TEN, "some-line-name");
         UpdateLineRequest toDeleteLine = new UpdateLineRequest(UUID.randomUUID(), BigDecimal.TEN, "some-line-name-delete");
         List<UpdateLineRequest> lines = List.of(presentLine,
