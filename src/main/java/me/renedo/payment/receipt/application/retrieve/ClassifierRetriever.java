@@ -15,6 +15,7 @@ public class ClassifierRetriever {
     }
 
     public Optional<Classifier> findClassifier(String text){
-        return Optional.ofNullable(repository.findByText(text).orElseGet(() -> repository.findByStartsWithText(text).orElse(null)));
+        String cleanText = Classifier.cleanNotDescriptiveCharacteres(text);
+        return Optional.ofNullable(repository.findByText(cleanText).orElseGet(() -> repository.findByStartsWithText(cleanText).orElse(null)));
     }
 }

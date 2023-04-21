@@ -126,6 +126,32 @@ class SpanishTextractServiceTest {
     }
 
     @Test
+    void test_ocr_lines_mercadona_two() {
+        List<String> strLines = List.of("MERCADONA, S.A.",
+        "A-46103834",
+        "C/ JUAN RAMÓN JIMÉNEZ 5",
+        "09007 BURGOS",
+        "TELÉFONO: 947577401",
+        "21/04/2023 15:22 OP: 331651",
+        "FACTURA SIMPLIFICADA: 4346-021-099123",
+        "Descripción P. Unit Imp.(€)",
+        "2 COPOS DE MAIZ 0% 1,50 3,00",
+        "2 TORTITAS DE MAIZ 1,10 2,20",
+        "1 PAN HAM INTEGRAL RUS 1,25",
+        "1 STICK ARNICA CATAPUM 4,25",
+        "1 CINTA DENTAL PACK-2 2.50",
+        "1 SURTIDO DULCES",
+        "0,122 kg 5,00 €/kg 0,61",
+        "u) TOTAL (€) 13,81",
+        "ENTREGA EFECTIVO 50,81",
+        "DEVOLUCIÓN 37,00");
+
+        List<OcrLine> lines = service.getOcrLines(strLines, BigDecimal.valueOf(13.81D));
+
+        assertThat(lines, hasSize(6));
+    }
+
+    @Test
     void test_ocr_lines_lidl() {
         List<String> strLines = List.of("LiDL",
         "LIDL SUPERMERCADOS S.A.U.",

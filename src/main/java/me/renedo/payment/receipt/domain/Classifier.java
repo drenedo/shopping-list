@@ -1,5 +1,6 @@
 package me.renedo.payment.receipt.domain;
 
+import java.text.Normalizer;
 import java.util.UUID;
 
 public class Classifier {
@@ -14,8 +15,9 @@ public class Classifier {
     }
 
     public Classifier(UUID id, String text, Category category) {
+        String cleanText = cleanNotDescriptiveCharacteres(text);
         this.id = id;
-        this.text = text;
+        this.text = cleanText;
         this.category = category;
     }
 
@@ -29,5 +31,9 @@ public class Classifier {
 
     public Category getCategory() {
         return category;
+    }
+
+    public static String cleanNotDescriptiveCharacteres(String text) {
+        return Normalizer.normalize(text.toLowerCase(), Normalizer.Form.NFKD).replaceAll("[\\., \\-_]", "").replaceAll("\\p{M}", "");
     }
 }
