@@ -1,6 +1,5 @@
 package me.renedo.payment.app.http.line;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,9 +29,10 @@ public class LineGetController extends V1Controller {
             .toList();
     }
 
-    public record LinePriceResponse(UUID id, String name, String site, BigDecimal total, String created) {
+    public record LinePriceResponse(UUID id, String name, String site, Double total, String created, Double price) {
         public LinePriceResponse(LinePrice line) {
-            this(line.getId(), line.getName(), line.getSite(), line.getTotal(), ISOFormatter.format(line.getCreated()));
+            this(line.getId(), line.getName(), line.getSite(), line.getTotal().doubleValue(), ISOFormatter.format(line.getCreated()),
+                line.getPrice());
         }
     }
 }

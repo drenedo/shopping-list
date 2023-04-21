@@ -1,6 +1,7 @@
 package me.renedo.payment.line.domain;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -15,12 +16,15 @@ public class LinePrice {
 
     private final LocalDateTime created;
 
-    public LinePrice(UUID id, String name, String site, BigDecimal total, LocalDateTime created) {
+    private final Double amount;
+
+    public LinePrice(UUID id, String name, String site, BigDecimal total, LocalDateTime created, Double amount) {
         this.id = id;
         this.name = name;
         this.site = site;
         this.total = total;
         this.created = created;
+        this.amount = amount;
     }
 
     public UUID getId() {
@@ -41,5 +45,13 @@ public class LinePrice {
 
     public LocalDateTime getCreated() {
         return created;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public Double getPrice() {
+        return amount != null ? total.divide(BigDecimal.valueOf(amount), 3, RoundingMode.HALF_UP).doubleValue() : null;
     }
 }

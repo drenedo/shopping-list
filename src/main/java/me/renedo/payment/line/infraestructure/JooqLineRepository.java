@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.jooq.DSLContext;
-import org.jooq.Record5;
+import org.jooq.Record6;
 import org.springframework.stereotype.Repository;
 
 import me.renedo.payment.line.domain.Line;
@@ -58,7 +58,7 @@ public class JooqLineRepository implements LineRepository {
     @Override
     public List<LinePrice> search(String text) {
         //TODO this has a bad performance, if there are a lot of data we need to considere another option.
-        return context.select(LINE.ID, LINE.NAME, RECEIPT.SITE, LINE.TOTAL, LINE.CREATED)
+        return context.select(LINE.ID, LINE.NAME, RECEIPT.SITE, LINE.TOTAL, LINE.CREATED, LINE.AMOUNT)
             .from(LINE)
             .leftJoin(RECEIPT).on(RECEIPT.ID.eq(LINE.RECEIPT))
             .where(lower(LINE.NAME).like("%" + text.toLowerCase() + "%"))
@@ -67,8 +67,9 @@ public class JooqLineRepository implements LineRepository {
             .map(this::toLinePrice);
     }
 
-    private LinePrice toLinePrice(Record5<UUID, String, String, Integer, LocalDateTime> record) {
-        return new LinePrice(record.value1(), record.value2(), record.value3(), new Money(record.value4()).getMoney(), record.value5());
+    private LinePrice toLinePrice(Record6<UUID, String, String, Integer, LocalDateTime, Integer> record) {
+        return new LinePrice(record.value1(), record.value2(), record.value3(), new Money(record.value4()).getMoney(), record.value5(),
+            new Amount(record.value6()).getAmount());
     }
 
     @Override

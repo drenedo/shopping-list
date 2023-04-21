@@ -1,6 +1,7 @@
 package me.renedo.payment.line.domain;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -66,5 +67,9 @@ public class Line {
 
     public LocalDateTime getCreated() {
         return created;
+    }
+
+    public Double getPrice() {
+        return amount!=null ? total.divide(BigDecimal.valueOf(amount), 3, RoundingMode.HALF_UP).doubleValue() : null;
     }
 }
