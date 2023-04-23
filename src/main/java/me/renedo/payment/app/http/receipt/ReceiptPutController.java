@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.twelvemonkeys.contrib.exif.EXIFUtilities;
 import me.renedo.app.http.V1Controller;
 import me.renedo.payment.app.http.receipt.record.ReceiptDetailResponse;
 import me.renedo.payment.receipt.application.create.ReceiptCreator;
@@ -78,7 +79,7 @@ public class ReceiptPutController extends V1Controller {
     }
 
     private static BufferedImage getBufferedImage(byte[] imageByte) throws IOException {
-        return ImageIO.read(new ByteArrayInputStream(imageByte));
+        return (BufferedImage) EXIFUtilities.readWithOrientation(new ByteArrayInputStream(imageByte)).getRenderedImage();
     }
 
     record Image(String image, String name) {

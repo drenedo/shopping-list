@@ -1,7 +1,8 @@
 package me.renedo.payment.receipt.domain;
 
-import java.text.Normalizer;
 import java.util.UUID;
+
+import me.renedo.shared.string.TextIdentifier;
 
 public class Classifier {
     private final UUID id;
@@ -34,6 +35,6 @@ public class Classifier {
     }
 
     public static String cleanNotDescriptiveCharacteres(String text) {
-        return Normalizer.normalize(text.toLowerCase(), Normalizer.Form.NFKD).replaceAll("[\\., \\-_]", "").replaceAll("\\p{M}", "");
+        return TextIdentifier.getIdentifier(text);
     }
 }
