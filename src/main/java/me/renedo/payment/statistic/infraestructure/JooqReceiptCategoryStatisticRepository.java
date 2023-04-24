@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import me.renedo.payment.receipt.domain.Category;
 import me.renedo.payment.statistic.domain.ReceiptCategoryStatistic;
 import me.renedo.payment.statistic.domain.ReceiptCategoryStatisticRepository;
+import me.renedo.shared.number.Money;
 
 @Repository
 public class JooqReceiptCategoryStatisticRepository implements ReceiptCategoryStatisticRepository {
@@ -35,6 +36,6 @@ public class JooqReceiptCategoryStatisticRepository implements ReceiptCategorySt
     }
 
     private ReceiptCategoryStatistic toReceiptCategoryStatistic(Record2<String, BigDecimal> record) {
-        return new ReceiptCategoryStatistic(Category.valueOfId(record.value1()), record.value2().doubleValue());
+        return new ReceiptCategoryStatistic(Category.valueOfId(record.value1()), new Money(record.value2().intValue()).getMoney().doubleValue());
     }
 }

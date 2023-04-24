@@ -5,15 +5,15 @@ import me.renedo.payment.receipt.domain.Category;
 public class ReceiptCategoryStatistic {
     private final Category category;
 
-    private final double amount;
+    private final double total;
 
     public ReceiptCategoryStatistic(Category category, double amount) {
         this.category = category;
-        this.amount = amount;
+        total = amount;
     }
 
-    public double getAmount() {
-        return amount;
+    public double getTotal() {
+        return total;
     }
 
     public Category getCategory() {
